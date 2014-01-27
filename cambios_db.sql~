@@ -1,0 +1,117 @@
+SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
+SET time_zone = "+00:00";
+
+--
+-- Base de datos: `ArturoBecerra`
+--
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `Entrada_Almacen`
+--
+
+CREATE TABLE IF NOT EXISTS `Entrada_Almacen` (
+  `id_entrada` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `id_usuario` int(10) unsigned NOT NULL DEFAULT '0',
+  `id_proveedor` int(10) unsigned NOT NULL,
+  `fecha` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `cancelada` enum('n','s') NOT NULL DEFAULT 'n',
+  PRIMARY KEY (`id_entrada`),
+  KEY `id_proveedor` (`id_proveedor`),
+  KEY `fecha` (`fecha`),
+  KEY `id_usuario` (`id_usuario`)
+) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=204 ;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `Entrada_Almacen_Articulo`
+--
+
+CREATE TABLE IF NOT EXISTS `Entrada_Almacen_Articulo` (
+  `id_entrada_almacen_articulo` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `id_entrada` int(10) unsigned NOT NULL DEFAULT '0',
+  `id_articulo` int(10) unsigned NOT NULL DEFAULT '0',
+  `cantidad` decimal(10,2) NOT NULL DEFAULT '0.00',
+  PRIMARY KEY (`id_entrada_almacen_articulo`)
+) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=1475 ;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `Inventario_Inicial_Presentacion`
+--
+
+CREATE TABLE IF NOT EXISTS `Inventario_Inicial_Presentacion` (
+  `id_inventario_presentacion` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `id_articulo` int(10) unsigned NOT NULL DEFAULT '0',
+  `fecha` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `cantidad` decimal(10,2) NOT NULL DEFAULT '0.00',
+  PRIMARY KEY (`id_inventario_presentacion`)
+) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=283 ;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `Proveedor`
+--
+
+CREATE TABLE IF NOT EXISTS `Proveedor` (
+  `id_proveedor` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `razon_social` varchar(100) NOT NULL DEFAULT '',
+  `nombre_comercial` varchar(100) NOT NULL DEFAULT '',
+  `rfc` varchar(15) NOT NULL DEFAULT '',
+  `curp` varchar(30) NOT NULL DEFAULT '',
+  `domicilio` varchar(60) NOT NULL DEFAULT '',
+  `colonia` varchar(60) NOT NULL DEFAULT '',
+  `cp` varchar(10) NOT NULL DEFAULT '',
+  `ciudad` varchar(50) NOT NULL DEFAULT '',
+  `estado` varchar(50) NOT NULL DEFAULT '',
+  `telefono` varchar(30) NOT NULL DEFAULT '',
+  `telefono2` varchar(20) NOT NULL DEFAULT '',
+  `fax` varchar(20) NOT NULL DEFAULT '',
+  `email` varchar(100) NOT NULL DEFAULT '',
+  `tipo` enum('compras','servicios','servicios_compras') NOT NULL DEFAULT 'compras',
+  `tipo_pago` enum('efectivo','cheque','transferencia','efectivo_cheque') NOT NULL DEFAULT 'efectivo',
+  `dias_credito` tinyint(4) NOT NULL DEFAULT '0',
+  `contacto` varchar(60) NOT NULL DEFAULT '',
+  `cuenta_contable` varchar(11) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id_proveedor`)
+) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=1090 ;
+
+--
+-- Disparadores `Proveedor`
+--
+DROP TRIGGER IF EXISTS `Proveedorins`;
+DELIMITER //
+CREATE TRIGGER `Proveedorins` AFTER INSERT ON `Proveedor`
+ FOR EACH ROW begin
+  if @DESACTIVA_TRIGGER IS NULL THEN
+    SET @DESACTIVA_TRIGGER = 1;
+    INSERT INTO Constitucion.Proveedor SELECT * FROM Proveedor WHERE id_proveedor = new.id_proveedor;
+    INSERT INTO Villa.Proveedor SELECT * FROM Proveedor WHERE id_proveedor = new.id_proveedor;
+    INSERT INTO Tecoman.Proveedor SELECT * FROM Proveedor WHERE id_proveedor = new.id_proveedor;
+    SET @DESACTIVA_TRIGGER = NULL;
+  end if;
+end
+//
+DELIMITER ;
+DROP TRIGGER IF EXISTS `Proveedorupd`;
+DELIMITER //
+CREATE TRIGGER `Proveedorupd` AFTER UPDATE ON `Proveedor`
+ FOR EACH ROW begin
+  if @DESACTIVA_TRIGGER IS NULL THEN
+    SET @DESACTIVA_TRIGGER = 1;
+    DELETE FROM Constitucion.Proveedor WHERE id_proveedor = new.id_proveedor;
+    INSERT INTO Constitucion.Proveedor SELECT * FROM Proveedor WHERE id_proveedor = new.id_proveedor;
+    DELETE FROM Villa.Proveedor WHERE id_proveedor = new.id_proveedor;
+    INSERT INTO Villa.Proveedor SELECT * FROM Proveedor WHERE id_proveedor = new.id_proveedor;
+    DELETE FROM Tecoman.Proveedor WHERE id_proveedor = new.id_proveedor;
+    INSERT INTO Tecoman.Proveedor SELECT * FROM Proveedor WHERE id_proveedor = new.id_proveedor;
+    SET @DESACTIVA_TRIGGER = NULL;
+  end if;
+end
+//
+DELIMITER ;
+
