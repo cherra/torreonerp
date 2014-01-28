@@ -13,13 +13,13 @@ class Login extends CI_Controller {
     }
         
     public function process(){
-        if(($datos = $this->input->post())){
-            if(!empty($datos['db'])){
-                $this->config->set_item('basededatos', $datos['db']);
-            }else{
-                die("No hay base de datos");
-            }
-        }
+//        if(($datos = $this->input->post())){
+//            if(!empty($datos['db'])){
+//                $this->config->set_item('basededatos', $datos['db']);
+//            }else{
+//                die("No hay base de datos");
+//            }
+//        }
         $this->load->model('login_model');
         $result = $this->login_model->validate(); // Validamos que el usuario puede logearse
         
