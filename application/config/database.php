@@ -45,24 +45,72 @@
 | the active record class
 */
 
-$active_group = 'torreon';
+$active_group = 'Torreon';
 $active_record = TRUE;
 
-$db['torreon']['hostname'] = 'localhost';
-$db['torreon']['username'] = 'cherra';
-$db['torreon']['password'] = 'cherra3003';
-$db['torreon']['database'] = 'Torreon';
-$db['torreon']['dbdriver'] = 'mysql';
-$db['torreon']['dbprefix'] = '';
-$db['torreon']['pconnect'] = TRUE;
-$db['torreon']['db_debug'] = TRUE;
-$db['torreon']['cache_on'] = FALSE;
-$db['torreon']['cachedir'] = '';
-$db['torreon']['char_set'] = 'utf8';
-$db['torreon']['dbcollat'] = 'utf8_general_ci';
-$db['torreon']['swap_pre'] = '';
-$db['torreon']['autoinit'] = TRUE;
-$db['torreon']['stricton'] = FALSE;
+$db['Torreon']['hostname'] = 'localhost';
+$db['Torreon']['username'] = 'cherra';
+$db['Torreon']['password'] = 'cherra3003';
+$db['Torreon']['database'] = 'Torreon';
+$db['Torreon']['dbdriver'] = 'mysql';
+$db['Torreon']['dbprefix'] = '';
+$db['Torreon']['pconnect'] = TRUE;
+$db['Torreon']['db_debug'] = TRUE;
+$db['Torreon']['cache_on'] = FALSE;
+$db['Torreon']['cachedir'] = '';
+$db['Torreon']['char_set'] = 'utf8';
+$db['Torreon']['dbcollat'] = 'utf8_general_ci';
+$db['Torreon']['swap_pre'] = '';
+$db['Torreon']['autoinit'] = TRUE;
+$db['Torreon']['stricton'] = FALSE;
+
+$db['TorreonSucursal']['hostname'] = 'localhost';
+$db['TorreonSucursal']['username'] = 'cherra';
+$db['TorreonSucursal']['password'] = 'cherra3003';
+$db['TorreonSucursal']['database'] = 'TorreonSucursal';
+$db['TorreonSucursal']['dbdriver'] = 'mysql';
+$db['TorreonSucursal']['dbprefix'] = '';
+$db['TorreonSucursal']['pconnect'] = TRUE;
+$db['TorreonSucursal']['db_debug'] = TRUE;
+$db['TorreonSucursal']['cache_on'] = FALSE;
+$db['TorreonSucursal']['cachedir'] = '';
+$db['TorreonSucursal']['char_set'] = 'utf8';
+$db['TorreonSucursal']['dbcollat'] = 'utf8_general_ci';
+$db['TorreonSucursal']['swap_pre'] = '';
+$db['TorreonSucursal']['autoinit'] = TRUE;
+$db['TorreonSucursal']['stricton'] = FALSE;
+
+$db['Mayoreo']['hostname'] = 'localhost';
+$db['Mayoreo']['username'] = 'cherra';
+$db['Mayoreo']['password'] = 'cherra3003';
+$db['Mayoreo']['database'] = 'Mayoreo';
+$db['Mayoreo']['dbdriver'] = 'mysql';
+$db['Mayoreo']['dbprefix'] = '';
+$db['Mayoreo']['pconnect'] = TRUE;
+$db['Mayoreo']['db_debug'] = TRUE;
+$db['Mayoreo']['cache_on'] = FALSE;
+$db['Mayoreo']['cachedir'] = '';
+$db['Mayoreo']['char_set'] = 'utf8';
+$db['Mayoreo']['dbcollat'] = 'utf8_general_ci';
+$db['Mayoreo']['swap_pre'] = '';
+$db['Mayoreo']['autoinit'] = TRUE;
+$db['Mayoreo']['stricton'] = FALSE;
+
+$db['Taqueria']['hostname'] = 'localhost';
+$db['Taqueria']['username'] = 'cherra';
+$db['Taqueria']['password'] = 'cherra3003';
+$db['Taqueria']['database'] = 'Taqueria';
+$db['Taqueria']['dbdriver'] = 'mysql';
+$db['Taqueria']['dbprefix'] = '';
+$db['Taqueria']['pconnect'] = TRUE;
+$db['Taqueria']['db_debug'] = TRUE;
+$db['Taqueria']['cache_on'] = FALSE;
+$db['Taqueria']['cachedir'] = '';
+$db['Taqueria']['char_set'] = 'utf8';
+$db['Taqueria']['dbcollat'] = 'utf8_general_ci';
+$db['Taqueria']['swap_pre'] = '';
+$db['Taqueria']['autoinit'] = TRUE;
+$db['Taqueria']['stricton'] = FALSE;
 
 /* End of file database.php */
 /* Location: ./application/config/database.php */

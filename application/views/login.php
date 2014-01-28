@@ -22,7 +22,8 @@
   }
 
   .form-signin input[type="text"],
-  .form-signin input[type="password"] {
+  .form-signin input[type="password"],
+  .form-signin select{
     font-size: 16px;
     height: auto;
     margin-bottom: 15px;
@@ -37,6 +38,13 @@
               <h2 class="form-signin-heading">Ingreso</h2>
               <input type="text" name="username" class="form-control" placeholder="Usuario" autofocus>
               <input type="password" name="password" class="form-control" placeholder="Contraseña">
+              <select name="db" class="form-control required">
+                <option value="">Sucursal...</option>
+                <option value="Torreon">Matriz</option>
+                <option value="TorreonSucursal">Mercado</option>
+                <option value="Mayoreo">Mayoreo</option>
+                <option value="Taqueria">Taquería</option>
+              </select>
               <button class="btn btn-lg btn-primary btn-block" type="submit">Entrar</button>
             <?php echo form_close(); ?>
         </div>
