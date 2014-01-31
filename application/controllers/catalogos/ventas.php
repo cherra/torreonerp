@@ -149,7 +149,6 @@ class Ventas extends CI_Controller {
      */
     public function clientes_credito_ver( $id = NULL, $offset = 0 ) {
         $this->load->model('catalogos/cliente','c');
-        $this->load->model('catalogos/ruta_cobranza','r');
         
         $cliente = $this->c->get_by_id($id);
         if ( empty($id) OR $cliente->num_rows() <= 0) {
@@ -162,7 +161,6 @@ class Ventas extends CI_Controller {
     	$data['action'] = $this->folder.$this->clase.'clientes_credito_editar/' . $id . '/' . $offset;
 
     	$data['datos'] = $cliente->row();
-        $data['ruta_cobranza'] = $this->r->get_by_id($data['datos']->id_ruta_cobranza)->row();
         
         $this->load->view('catalogos/clientes/vista_credito', $data);
     }
@@ -172,7 +170,6 @@ class Ventas extends CI_Controller {
      */
     public function clientes_credito_editar( $id = NULL, $offset = 0 ) {
         $this->load->model('catalogos/cliente','c');
-        $this->load->model('catalogos/ruta_cobranza','r');
         
         $cliente = $this->c->get_by_id($id);
         if ( empty($id) OR $cliente->num_rows() <= 0) {
@@ -185,29 +182,12 @@ class Ventas extends CI_Controller {
     	$data['action'] = $this->folder.$this->clase.'clientes_credito_editar/' . $id . '/' . $offset;
     	 
     	if ( ($datos = $this->input->post()) ) {
-            if(empty($datos['lun']))
-                $datos['lun'] = 'n';
-            if(empty($datos['mar']))
-                $datos['mar'] = 'n';
-            if(empty($datos['mie']))
-                $datos['mie'] = 'n';
-            if(empty($datos['jue']))
-                $datos['jue'] = 'n';
-            if(empty($datos['c']))
-                $datos['vie'] = 'n';
-            if(empty($datos['sab']))
-                $datos['sab'] = 'n';
-            if(empty($datos['dom']))
-                $datos['dom'] = 'n';
-            if(empty($datos['deudor']))
-                $datos['deudor'] = 'n';
             $this->c->update($id, $datos);
             $this->session->set_flashdata('mensaje',$this->config->item('update_success'));
             redirect($this->folder.$this->clase.'clientes_credito_ver/'.$id . '/' . $offset);
     	}
 
     	$data['datos'] = $this->c->get_by_id($id)->row();
-        $data['rutas'] = $this->r->get_all()->result();
         
         $this->load->view('catalogos/clientes/formulario_credito', $data);
     }
