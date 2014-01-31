@@ -105,6 +105,9 @@
                         <li><a href="#">Plantillas</a></li>
                     </ul>
                 </li>
+                <li>
+                    <p class="navbar-text"><?php echo $this->session->userdata('basededatos'); ?></p>
+                </li>
             </ul>
         </div>
     </div>

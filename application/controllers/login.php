@@ -3,6 +3,19 @@
 class Login extends CI_Controller {
 
     public $layout = 'welcome';
+    
+    function __construct() {
+        parent::__construct();
+        // En el formulario de login se define la base de datos en la que se va a trabajar
+        if(($datos = $this->input->post())){
+            if(!empty($datos['basededatos'])){
+                $this->session->set_userdata('basededatos', $datos['basededatos']);
+                //$this->config->set_item('basededatos', $datos['basededatos']);
+            }else{
+                redirect('login');
+            }
+        }
+    }
 
     /*
     * Muestra en pantalla el login del sistema
@@ -13,13 +26,6 @@ class Login extends CI_Controller {
     }
         
     public function process(){
-//        if(($datos = $this->input->post())){
-//            if(!empty($datos['db'])){
-//                $this->config->set_item('basededatos', $datos['db']);
-//            }else{
-//                die("No hay base de datos");
-//            }
-//        }
         $this->load->model('login_model');
         $result = $this->login_model->validate(); // Validamos que el usuario puede logearse
         

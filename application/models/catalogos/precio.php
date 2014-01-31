@@ -9,6 +9,11 @@ class Precio extends CI_Model {
     private $tbl = 'Articulo_Lista';
     private $tbl_articulo = 'Articulo';
     
+    function __construct() {
+        parent::__construct();
+        $db = $this->session->userdata('basededatos');
+        $this->load->database($db);
+    }
     /*
      * Cuenta todos los registros utilizando un filtro de busqueda
      */

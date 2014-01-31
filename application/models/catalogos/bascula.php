@@ -9,6 +9,12 @@ class Bascula extends CI_Model {
     
     private $tbl = 'Basculas';
     
+    function __construct() {
+        parent::__construct();
+        $db = $this->session->userdata('basededatos');
+        $this->load->database($db);
+    }
+    
     /*
      * Cuenta todos los registros utilizando un filtro de busqueda
      */

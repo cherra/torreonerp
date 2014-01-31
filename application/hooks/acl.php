@@ -17,6 +17,10 @@ class acl
                     $this->userRoles = $this->getUserRoles();
                     $this->buildACL();
                 }*/
+               
+                $db = $this->ci->session->userdata('basededatos');
+                if($db)
+                    $this->ci->load->database($db);
 	}
 
 	function buildACL() {

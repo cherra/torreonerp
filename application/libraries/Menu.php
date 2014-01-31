@@ -18,6 +18,9 @@ class Menu {
     function __construct() {
         $this->ci = &get_instance();
         $this->routing =& load_class('Router');
+        $db = $this->ci->session->userdata('basededatos');
+        if($db)
+            $this->ci->load->database($db);
         //$this->ci->load->model('menu');
     }
     

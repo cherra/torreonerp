@@ -8,6 +8,12 @@ class Permiso extends CI_Model {
     
     private $tbl = "Permisos";
     
+    function __construct() {
+        parent::__construct();
+        $db = $this->session->userdata('basededatos');
+        $this->load->database($db);
+    }
+    
     function count_all() {
         return $this->db->count_all($this->tbl);
     }

@@ -8,6 +8,12 @@ class Lista extends CI_Model {
     
     private $tbl = 'Lista';
     
+    function __construct() {
+        parent::__construct();
+        $db = $this->session->userdata('basededatos');
+        $this->load->database($db);
+    }
+    
     /*
      * Cuenta todos los registros utilizando un filtro de busqueda
      */

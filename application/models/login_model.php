@@ -5,6 +5,8 @@
 class Login_model extends CI_Model{
     function __construct(){
         parent::__construct();
+        $db = $this->session->userdata('basededatos');
+        $this->load->database($db);
     }
      
     public function validate(){

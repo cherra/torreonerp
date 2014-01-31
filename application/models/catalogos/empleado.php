@@ -8,6 +8,11 @@ class Empleado extends CI_Model {
     
     private $tbl = 'Empleado';
     
+    function __construct() {
+        parent::__construct();
+        $db = $this->session->userdata('basededatos');
+        $this->load->database($db);
+    }
     /*
      * Cuenta todos los registros utilizando un filtro de busqueda
      */

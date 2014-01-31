@@ -38,7 +38,7 @@
               <h2 class="form-signin-heading">Ingreso</h2>
               <input type="text" name="username" class="form-control" placeholder="Usuario" autofocus>
               <input type="password" name="password" class="form-control" placeholder="Contraseña">
-              <select name="db" class="form-control required">
+              <select name="basededatos" class="form-control required">
                 <option value="">Sucursal...</option>
                 <option value="Torreon">Matriz</option>
                 <option value="TorreonSucursal">Mercado</option>
