@@ -496,7 +496,7 @@ class Articulos extends CI_Controller {
             
             if ( ! $this->upload->do_upload('lista') )
             {
-                //$error = $this->upload->display_errors();
+                //$this->upload->display_errors()
                 $this->session->set_flashdata('mensaje',$this->config->item('error'));
             }
             else
@@ -542,7 +542,6 @@ class Articulos extends CI_Controller {
         if(!empty($id_lista)){
             $this->load->model('catalogos/precio','p');
             $this->load->model('catalogos/presentacion','pr');
-            $this->load->model('catalogos/subproducto','sp');
             $this->load->model('catalogos/lista','l');
             
             $lista = $this->l->get_by_id($id_lista)->row();
@@ -558,14 +557,13 @@ class Articulos extends CI_Controller {
             
             $presentaciones = $this->pr->get_all()->result();
             foreach($presentaciones as $pr){
-                $subproducto = $this->sp->get_by_id($pr->id_subproducto)->row();
                 $precio = $this->p->get_precio($pr->id_articulo, $id_lista)->row();
-                if(!empty($subproducto->codigo) && !empty($pr->codigo)){
+                if(!empty($pr->codigo)){
                     if(!empty($precio->precio))
                         $p = $precio->precio;
                     else
                         $p = 0;
-                    fputcsv($fp, array($subproducto->codigo.$pr->codigo,$p, $pr->nombre));
+                    fputcsv($fp, array($pr->codigo,$p, $pr->nombre));
                 }
             }
             fclose($fp);
