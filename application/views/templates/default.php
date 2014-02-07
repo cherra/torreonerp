@@ -6,13 +6,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
     <!-- css -------------------------------------------------------------------- -->
     <link href="<?php echo asset_url(); ?>bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="<?php echo asset_url(); ?>css/redmond/jquery-ui.min.css" rel="stylesheet">
     <!-- <link href="<?php echo asset_url(); ?>bootstrap/css/bootstrap-theme.min.css" rel="stylesheet"> -->
    
   <!-- js ---------------------------------------------------------------------- -->
     <script src="<?php echo asset_url(); ?>js/jquery.min.js"></script>
     <script src="<?php echo asset_url(); ?>bootstrap/js/bootstrap.min.js"></script>
     <script src="<?php echo asset_url(); ?>js/jquery.validate.js"></script>
+    <script src="<?php echo asset_url(); ?>js/globalize.js"></script>
+    <script src="<?php echo asset_url(); ?>js/globalize.culture.es-MX.js"></script>
+    <script src="<?php echo asset_url(); ?>js/jqueryui.js"></script>
+    <script src="<?php echo asset_url(); ?>js/jquery.ui.datepicker-es.js"></script>
     <script src="<?php echo asset_url(); ?>js/messages_es.js"></script>
+    <script src="<?php echo asset_url(); ?>js/jquery.media.js"></script>
     <style>
         body { 
             padding-top: 55px; 
@@ -197,6 +203,62 @@
                 $(element).parent().parent().removeClass(errorClass);
             }
         });
+        
+        // Widget para los input donde se debe ingresar una hora (ej. 14:00)
+        $.widget( "ui.timespinner", $.ui.spinner, {
+            options: {
+                // seconds
+                step: 600 * 3000,
+                // hours
+                page: 60
+            },
+
+            _parse: function( value ) {
+                if ( typeof value === "string" ) {
+                    // already a timestamp
+                    if ( Number( value ) == value ) {
+                        return Number( value );
+                    }
+                    return +Globalize.parseDate( value );
+                }
+                return value;
+            },
+
+            _format: function( value ) {
+                return Globalize.format( new Date(value), "t" );
+            }
+        });
+        
+        Globalize.culture( 'es-MX' );
+        // Obtiene la fecha actual
+        var d = new Date();
+        var month = d.getMonth()+1;
+        var day = d.getDate();
+        var hour = d.getHours();
+        var minutes = d.getMinutes();
+        
+        // Campos de tipo fecha
+        var fecha = d.getFullYear() + '-' +
+            (month<10 ? '0' : '') + month + '-' +
+            (day<10 ? '0' : '') + day;
+    
+        $('.fecha').datepicker({
+            dateFormat: "yy-mm-dd",
+            changeMonth: true,
+            changeYear: true
+        });
+        $('.fecha').each(function(){
+            if($(this).val() === "")
+                $(this).datepicker("setDate", fecha); 
+        });
+        
+        // Campos de tipo hora
+        var hora = (hour<10 ? '0' : '') + hour + ':' +
+            (minutes<10 ? '0' : '') + minutes;
+        
+        // Los input con la clase "hora" se utilizan para seleccionar la hora
+        $('.hora').timespinner();
+        $('.hora').val(hora);
         
 //        $('#database').change(function(){
 //            $('#cambiar_database').submit();
