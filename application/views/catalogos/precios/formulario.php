@@ -20,6 +20,12 @@
         </div>
     </div>
     <div class="form-group">
+        <label class="col-sm-2" for="precio_minimo">Precio mínimo</label>
+        <div class="col-sm-8 col-md-6 col-lg-4">
+            <input type="text" id="precio_minimo" name="precio_minimo" class="form-control required" value="<?php echo (isset($datos->precio_minimo) ? $datos->precio_minimo : ''); ?>" placeholder="Precio mínimo">
+        </div>
+    </div>
+    <div class="form-group">
         <label class="col-sm-2" for="precio">Precio</label>
         <div class="col-sm-8 col-md-6 col-lg-4">
             <input type="text" id="precio" name="precio" class="form-control required" value="<?php echo (isset($datos->precio) ? $datos->precio : ''); ?>" placeholder="Precio">

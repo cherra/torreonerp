@@ -420,12 +420,13 @@ class Articulos extends CI_Controller {
             $this->table->set_empty('&nbsp;');
             $tmpl = array ( 'table_open' => '<table class="' . $this->config->item('tabla_css') . '" >' );
             $this->table->set_template($tmpl);
-            $this->table->set_heading('Código', 'Nombre', 'Precio');
+            $this->table->set_heading('Código', 'Nombre', 'Precio mín.', 'Precio');
             foreach ($datos as $d) {
                 $precio = $this->p->get_precio($d->id_articulo, $id_lista)->row();
                 $this->table->add_row(
                         (strlen($d->codigo) > 0) ? $d->codigo : '',
                         $d->nombre,
+                        array('data' => number_format((empty($precio->precio_minimo) ? 0 : $precio->precio_minimo),2), 'style' => 'text-align: right;'),
                         array('data' => number_format((empty($precio->precio) ? 0 : $precio->precio),2), 'style' => 'text-align: right;'),
                         anchor($this->folder.$this->clase.'precios_editar/' . $id_lista . '/' . $d->id_articulo. '/'. $offset, '<span class="'.$this->config->item('icono_editar').'"></span>')
                 );
