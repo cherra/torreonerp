@@ -30,7 +30,6 @@ class Informes extends CI_Controller{
             
             $this->load->model('venta','v');
             $ventas = $this->v->get_by_fecha( $post['desde'], $post['hasta'], $post['filtro'] )->result();
-            //die($this->db->last_query());
             
             // generar tabla
             $this->load->library('table');
@@ -42,7 +41,9 @@ class Informes extends CI_Controller{
             $total = $total_vigentes = $total_canceladas = 0;
             $estatus = 'n';
             $clase = '';
+            $caja = '';
             foreach ($ventas as $v){
+                
                 if($v->cancelada == 's'){
                     $clase = 'cancelado';
                     $total_canceladas += $v->monto;
@@ -50,17 +51,33 @@ class Informes extends CI_Controller{
                     $clase = '';
                     $total_vigentes += $v->monto;
                 }
+                
                 if($estatus != $v->cancelada){
                     // Total de facturas vigentes
-                    $this->table->add_row( '', '', '', '<h5>Total</h5>', array('data' => '<h5>'.number_format($total_vigentes,2).'</h5>', 'style' => 'text-align: right;'));
-                    $this->table->add_row_class($clase);
+                    if($v->cancelada == 's'){
+                        $this->table->add_row( '', '', '', '<h5>Total</h5>', array('data' => '<h5>'.number_format($total_vigentes,2).'</h5>', 'style' => 'text-align: right;'));
+                        $this->table->add_row_class($clase);
+                        $total_vigentes = 0;
+
+                        $this->table->add_row( array('data' => '', 'colspan' => '5'));
+                        $this->table->add_row_class($clase);
+                        $this->table->add_row( array('data' => 'CANCELADAS', 'colspan' => '5'));
+                        $this->table->add_row_class($clase);
+                    }else{
+                        // Total de facturas canceladas
+                        $this->table->add_row( '', '', '', 'Total canceladas', array('data' => number_format($total_canceladas,2), 'style' => 'text-align: right;'));
+                        $this->table->add_row_class('info text-error');
+                        $total_canceladas = 0;
+                    }
                     $estatus = $v->cancelada;
-                    
+                }
+                
+                if($caja != '' && $caja != $v->caja){
                     $this->table->add_row( array('data' => '', 'colspan' => '5'));
                     $this->table->add_row_class($clase);
-                    $this->table->add_row( array('data' => 'CANCELADAS', 'colspan' => '5'));
-                    $this->table->add_row_class($clase);
                 }
+                $caja = $v->caja;
+                
                 $fecha = date_create($v->fecha);
                 $this->table->add_row(
                     array('data' => $v->id_venta,'class' => $clase),
