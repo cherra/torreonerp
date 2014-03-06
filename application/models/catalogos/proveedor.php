@@ -18,12 +18,12 @@ class Proveedor extends CI_Model {
      */
     function count_all( $filtro = NULL ) {
         if(!empty($filtro)){
-            $filtro = explode(' ', $filtro);
-            foreach($filtro as $f){
-                $this->db->or_like('razon_social',$f);
-                $this->db->or_like('nombre_comercial',$f);
-                $this->db->or_like('contacto',$f);
-            }
+            //$filtro = explode(' ', $filtro);
+            //foreach($filtro as $f){
+                $this->db->or_like('razon_social',$filtro);
+                $this->db->or_like('nombre_comercial',$filtro);
+                $this->db->or_like('contacto',$filtro);
+            //}
         }
         $query = $this->db->get($this->tbl);
         return $query->num_rows();
@@ -42,12 +42,12 @@ class Proveedor extends CI_Model {
     */
     function get_paged_list($limit = NULL, $offset = 0, $filtro = NULL) {
         if(!empty($filtro)){
-            $filtro = explode(' ', $filtro);
-            foreach($filtro as $f){
-                $this->db->or_like('razon_social',$f);
-                $this->db->or_like('nombre_comercial',$f);
-                $this->db->or_like('contacto',$f);
-            }
+            //$filtro = explode(' ', $filtro);
+            //foreach($filtro as $f){
+                $this->db->or_like('razon_social',$filtro);
+                $this->db->or_like('nombre_comercial',$filtro);
+                $this->db->or_like('contacto',$filtro);
+            //}
         }
         $this->db->order_by('razon_social','asc');
         return $this->db->get($this->tbl, $limit, $offset);

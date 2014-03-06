@@ -19,10 +19,13 @@ class Cliente extends CI_Model {
      */
     function count_all( $filtro = NULL ) {
         if(!empty($filtro)){
-            $filtro = explode(' ', $filtro);
-            foreach($filtro as $f){
-                $this->db->or_like('id_cliente',$f);
-            }
+            //$filtro = explode(' ', $filtro);
+            //foreach($filtro as $f){
+                $this->db->or_like('id_cliente',$filtro);
+                $this->db->or_like('nombre',$filtro);
+                $this->db->or_like('nombre_comercial',$filtro);
+                $this->db->or_like('contacto',$filtro);
+            //}
         }
         $query = $this->db->get($this->tbl);
         return $query->num_rows();
@@ -41,13 +44,13 @@ class Cliente extends CI_Model {
     */
     function get_paged_list($limit = NULL, $offset = 0, $filtro = NULL) {
         if(!empty($filtro)){
-            $filtro = explode(' ', $filtro);
-            foreach($filtro as $f){
-                $this->db->or_like('id_cliente',$f);
-                $this->db->or_like('nombre',$f);
-                $this->db->or_like('nombre_comercial',$f);
-                $this->db->or_like('contacto',$f);
-            }
+            //$filtro = explode(' ', $filtro);
+            //foreach($filtro as $f){
+                $this->db->or_like('id_cliente',$filtro);
+                $this->db->or_like('nombre',$filtro);
+                $this->db->or_like('nombre_comercial',$filtro);
+                $this->db->or_like('contacto',$filtro);
+            //}
         }
         $this->db->order_by('nombre','asc');
         return $this->db->get($this->tbl, $limit, $offset);

@@ -19,11 +19,11 @@ class Presentacion extends CI_Model {
      */
     function count_all( $filtro = NULL ) {
         if(!empty($filtro)){
-            $filtro = explode(' ', $filtro);
-            foreach($filtro as $f){
-                $this->db->or_like('a.nombre',$f);
-                $this->db->or_like('l.nombre',$f);
-            }
+            //$filtro = explode(' ', $filtro);
+            //foreach($filtro as $f){
+                $this->db->or_like('a.nombre',$filtro);
+                $this->db->or_like('l.nombre',$filtro);
+            //}
         }
         $this->db->join('Linea l', 'a.id_linea = l.id_linea');
         $query = $this->db->get($this->tbl.' a');
@@ -44,11 +44,11 @@ class Presentacion extends CI_Model {
     function get_paged_list($limit = NULL, $offset = 0, $filtro = NULL) {
         $this->db->select('a.*', FALSE);
         if(!empty($filtro)){
-            $filtro = explode(' ', $filtro);
-            foreach($filtro as $f){
-                $this->db->or_like('a.nombre',$f);
-                $this->db->or_like('l.nombre',$f);
-            }
+            //$filtro = explode(' ', $filtro);
+            //foreach($filtro as $f){
+                $this->db->or_like('a.nombre',$filtro);
+                $this->db->or_like('l.nombre',$filtro);
+            //}
         }
         $this->db->join('Linea l', 'a.id_linea = l.id_linea');
         $this->db->order_by('a.nombre','asc');
