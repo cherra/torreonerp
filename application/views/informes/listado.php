@@ -1,6 +1,6 @@
 <!-- La clase formulario se oculta en el template de para PDFs  -->
 <div class="row formulario">
-    <div class="col-xs-12">
+    <div class="col-xs-12 col-sm-6 col-md-4">
     <?php echo form_open('', array('class' => 'form-horizontal', 'name' => 'form', 'id' => 'form')) ?>
         <div class="form-group">
             <label class="control-label hidden-phone" for="desde">Desde</label>
