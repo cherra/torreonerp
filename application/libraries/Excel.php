@@ -9,7 +9,7 @@
 require_once 'excel/PHPExcel.php';
 //require_once 'excel/PHPExcel/IOFactory.php';
 
-class Excel {
+class Excel extends PHPExcel {
     
     public function __construct() {
         parent::__construct();
