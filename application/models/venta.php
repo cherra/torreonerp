@@ -78,7 +78,7 @@ class Venta extends CI_Model{
             }
         }
         $this->db->group_by('v.id_venta');
-        $this->db->order_by('ca.nombre, v.cancelada desc, v.id_venta');
+        $this->db->order_by('v.cancelada desc, ca.nombre, v.id_venta');
         return $this->db->get($this->tbl.' v');
     }
     
