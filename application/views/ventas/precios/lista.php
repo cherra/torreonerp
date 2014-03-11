@@ -46,7 +46,7 @@
 </div>
 <script>
 $(document).ready(function(){
-    var url = "<?php echo site_url(); ?>/catalogos/articulos/precios";
+    var url = "<?php echo site_url(); ?>/ventas/precios/index";
 
     $('#filtro').focus();
     

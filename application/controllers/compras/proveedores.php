@@ -7,21 +7,21 @@
  */
 class Proveedores extends CI_Controller {
     
-    private $folder = 'catalogos/';
+    private $folder = 'compras/';
     private $clase = 'proveedores/';
     
     function __construct() {
         parent::__construct();
     }
     
-    public function proveedor( $offset = 0 ){
+    public function index( $offset = 0 ){
         $this->load->model('catalogos/proveedor','p');
         
         $this->config->load("pagination");
     	
         $data['titulo'] = 'Proveedores <small>Lista</small>';
-    	$data['link_add'] = $this->folder.$this->clase.'proveedor_agregar/'.$offset;
-    	$data['action'] = $this->folder.$this->clase.'proveedor';
+    	$data['link_add'] = $this->folder.$this->clase.'agregar/'.$offset;
+    	$data['action'] = $this->folder.$this->clase.'index';
         
         // Filtro de busqueda (se almacenan en la sesión a través de un hook)
         $filtro = $this->session->userdata('filtro');
@@ -33,7 +33,7 @@ class Proveedores extends CI_Controller {
     	
         // generar paginacion
     	$this->load->library('pagination');
-    	$config['base_url'] = site_url($this->folder.$this->clase.'proveedor');
+    	$config['base_url'] = site_url($this->folder.$this->clase.'index');
     	$config['total_rows'] = $this->p->count_all($filtro);
     	$config['per_page'] = $page_limit;
     	$config['uri_segment'] = 4;
@@ -51,7 +51,7 @@ class Proveedores extends CI_Controller {
                     $d->razon_social,
                     $d->nombre_comercial,
                     $d->telefono,
-                    anchor($this->folder.$this->clase.'proveedor_ver/' . $d->id_proveedor . '/' . $offset, '<span class="'.$this->config->item('icono_editar').'"></span>')
+                    anchor($this->folder.$this->clase.'ver/' . $d->id_proveedor . '/' . $offset, '<span class="'.$this->config->item('icono_editar').'"></span>')
             );
     	}
     	$data['table'] = $this->table->generate();
@@ -62,22 +62,22 @@ class Proveedores extends CI_Controller {
     /*
      * Agregar un proveedor
      */
-    public function proveedor_agregar( $offset = 0 ) {
+    public function agregar( $offset = 0 ) {
         $this->load->model('catalogos/proveedor','p');
         
     	$data['titulo'] = 'Proveedores <small>Registro nuevo</small>';
-    	$data['link_back'] = $this->folder.$this->clase.'proveedor/'.$offset;
+    	$data['link_back'] = $this->folder.$this->clase.'index/'.$offset;
     
-    	$data['action'] = $this->folder.$this->clase.'proveedor_agregar/'.$offset;
+    	$data['action'] = $this->folder.$this->clase.'agregar/'.$offset;
     	if ( ($datos = $this->input->post()) ) {
             if(strlen($datos['rfc']) > 0)
                 $datos['tipo_impresion'] = 'factura';
             if( ($id = $this->p->save($datos)) ){
                 $this->session->set_flashdata('mensaje',$this->config->item('create_success'));
-                redirect($this->folder.$this->clase.'proveedor_ver/'.$id.'/'.$offset);
+                redirect($this->folder.$this->clase.'ver/'.$id.'/'.$offset);
             }else{
                 $this->session->set_flashdata('mensaje',$this->config->item('error'));
-                redirect($this->folder.$this->clase.'proveedor_agregar/'.$offset);
+                redirect($this->folder.$this->clase.'agregar/'.$offset);
             }
     	}
         
@@ -88,18 +88,18 @@ class Proveedores extends CI_Controller {
     /*
      * Vista previa del proveedor
      */
-    public function proveedor_ver( $id = NULL, $offset = 0 ) {
+    public function ver( $id = NULL, $offset = 0 ) {
         $this->load->model('catalogos/proveedor','p');
         
         $proveedor = $this->p->get_by_id($id);
         if ( empty($id) OR $proveedor->num_rows() <= 0) {
-            redirect($this->folder.$this->clase.'proveedor');
+            redirect($this->folder.$this->clase.'index');
     	}
     	
     	$data['titulo'] = 'Proveedores <small>Ver registro</small>';
-    	$data['link_back'] = $this->folder.$this->clase.'proveedor/' . $offset;
+    	$data['link_back'] = $this->folder.$this->clase.'index/' . $offset;
         
-    	$data['action'] = $this->folder.$this->clase.'proveedor_editar/' . $id . '/' . $offset;
+    	$data['action'] = $this->folder.$this->clase.'editar/' . $id . '/' . $offset;
 
     	$data['datos'] = $proveedor->row();
         
@@ -109,22 +109,22 @@ class Proveedores extends CI_Controller {
     /*
      * Editar un proveedor
      */
-    public function proveedor_editar( $id = NULL, $offset = 0 ) {
+    public function editar( $id = NULL, $offset = 0 ) {
         $this->load->model('catalogos/proveedor','p');
         
         $cliente = $this->p->get_by_id($id);
         if ( empty($id) OR $cliente->num_rows() <= 0) {
-            redirect($this->folder.$this->clase.'proveedor');
+            redirect($this->folder.$this->clase.'index');
     	}
     	
     	$data['titulo'] = 'Proveedores <small>Editar registro</small>';
-    	$data['link_back'] = $this->folder.$this->clase.'proveedor_ver/'.$id . '/' . $offset;
-    	$data['action'] = $this->folder.$this->clase.'proveedor_editar/' . $id . '/' . $offset;
+    	$data['link_back'] = $this->folder.$this->clase.'ver/'.$id . '/' . $offset;
+    	$data['action'] = $this->folder.$this->clase.'editar/' . $id . '/' . $offset;
     	 
     	if ( ($datos = $this->input->post()) ) {
             $this->p->update($id, $datos);
             $this->session->set_flashdata('mensaje',$this->config->item('update_success'));
-            redirect($this->folder.$this->clase.'proveedor_ver/'.$id . '/' . $offset);
+            redirect($this->folder.$this->clase.'ver/'.$id . '/' . $offset);
     	}
 
     	$data['datos'] = $this->p->get_by_id($id)->row();
