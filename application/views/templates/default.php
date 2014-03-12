@@ -180,12 +180,13 @@
                 
             </div>
     </div>
-</div>
     <div class="row">
         <div class="col-sm-offset-3 col-lg-offset-2 col-sm-4 col-lg-5">
                     <p><?php if($this->session->flashdata('mensaje')) echo $this->session->flashdata('mensaje') ?></p>
             </div>
     </div>
+</div>
+    
 <script>
     $(document).ready(function(){
         $('form').validate({
