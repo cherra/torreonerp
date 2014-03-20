@@ -162,7 +162,7 @@ class Articulos extends CI_Controller {
     	$this->table->set_empty('&nbsp;');
     	$tmpl = array ( 'table_open' => '<table class="' . $this->config->item('tabla_css') . '" >' );
     	$this->table->set_template($tmpl);
-    	$this->table->set_heading('Nombre', 'Código', 'Tipo', 'Subproducto', '');
+    	$this->table->set_heading('Nombre', 'Código', 'Tipo', 'Línea', 'Stock', '');
     	foreach ($datos as $d) {
             $linea = $this->l->get_by_id($d->id_linea)->row();
             $this->table->add_row(
@@ -170,6 +170,7 @@ class Articulos extends CI_Controller {
                     $d->codigo,
                     $d->tipo,
                     (!empty($linea->nombre) ? $linea->nombre : ''),
+                    $d->stock,
                     anchor($this->folder.$this->clase.'presentaciones_ver/' . $d->id_articulo. '/' . $offset, '<span class="'.$this->config->item('icono_editar').'"></span>')
             );
     	}
@@ -244,10 +245,8 @@ class Articulos extends CI_Controller {
             if(strlen($datos['codigo']) == 0){
                 $datos['codigo'] = null;
             }
-            if(empty($datos['iva']))
-                $datos['iva'] = 'n';
-            if(empty($datos['inventariado']))
-                $datos['inventariado'] = 'n';
+            if(empty($datos['stock']))
+                $datos['stock'] = 'n';
             $this->p->update($id, $datos);
             $this->session->set_flashdata('mensaje',$this->config->item('update_success'));
             redirect($this->folder.$this->clase.'presentaciones_ver/'.$id.'/'. $offset);

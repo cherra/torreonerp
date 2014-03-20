@@ -42,52 +42,13 @@
     </div>
     <?php } ?>
     <div class="form-group">
-        <label class="col-sm-3" for="inventariado">Control de inventario</label>
+        <label class="col-sm-3" for="stock">Control de inventario</label>
         <div class="col-sm-6 col-md-4">
-            <input type="checkbox" name="inventariado" value="s" <?php 
-            if(isset($datos->inventariado)){
-                echo $datos->inventariado == 's' ? 'checked' : ''; 
+            <input type="checkbox" name="stock" value="s" <?php 
+            if(isset($datos->stock)){
+                echo $datos->stock == 's' ? 'checked' : ''; 
             }
             ?>>
-        </div>
-    </div>
-    <div class="form-group">
-        <label class="col-sm-3" for="kg_pieza">Kilos por pieza</label>
-        <div class="col-sm-8 col-md-6 col-lg-4">
-            <input type="text" name="kg_pieza" class="form-control number" value="<?php echo (isset($datos->kg_pieza) ? $datos->kg_pieza : ''); ?>" placeholder="Kilos por pieza">
-        </div>
-    </div>
-    <div class="form-group">
-        <label class="col-sm-3" for="factor_peso">Factor de peso</label>
-        <div class="col-sm-8 col-md-6 col-lg-4">
-            <input type="text" name="factor_peso" class="form-control number" value="<?php echo (isset($datos->factor_peso) ? $datos->factor_peso : ''); ?>" placeholder="Factor">
-            <span class="help-block">Útil en el caso de paquetes, ej. si 1 unidad = 3.5kg entonces el factor de peso = 3.5</span>
-        </div>
-    </div>
-    <div class="form-group">
-        <label class="col-sm-3" for="tipo_factor_peso">Tipo de factor</label>
-        <div class="col-sm-8 col-md-6 col-lg-4">
-            <select name="tipo_factor_peso" class="form-control required">
-                <option value="factor" <?php if(isset($datos) && $datos->tipo_factor_peso == 'factor') echo "selected"; ?>>Factor</option>
-                <option value="fijo" <?php if(isset($datos) && $datos->tipo_factor_peso == 'fijo') echo "selected"; ?>>Fijo</option>
-            </select>
-            <span class="help-block">Factor = se multiplica por la cantidad. Fijo = No importa la cantidad, siempre se aplica este factor.</span>
-        </div>
-    </div>
-    <div class="form-group">
-        <label class="col-sm-3" for="iva">IVA</label>
-        <div class="col-sm-6 col-md-4">
-            <input type="checkbox" name="iva" value="s" <?php 
-            if(isset($datos->iva)){
-                echo $datos->iva == 's' ? 'checked' : ''; 
-            }
-            ?>>
-        </div>
-    </div>
-    <div class="form-group">
-        <label class="col-sm-3" for="observaciones">Observaciones</label>
-        <div class="col-sm-8 col-md-6 col-lg-4">
-            <textarea name="observaciones" class="form-control" placeholder="Observaciones" rows="4"><?php echo (isset($datos->observaciones) ? $datos->observaciones : ''); ?></textarea>
         </div>
     </div>
 <?php echo form_close(); ?>
