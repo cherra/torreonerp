@@ -30,6 +30,17 @@ class Presentacion extends CI_Model {
         return $query->num_rows();
     }
     
+    function count_control_stock( $filtro = NULL ) {
+        if(!empty($filtro)){
+                $this->db->or_like('a.nombre',$filtro);
+                $this->db->or_like('l.nombre',$filtro);
+        }
+        $this->db->where('a.stock','s');
+        $this->db->join('Linea l', 'a.id_linea = l.id_linea');
+        $query = $this->db->get($this->tbl.' a');
+        return $query->num_rows();
+    }
+    
     /**
      *  Obtiene todos los registros de la tabla
      */
@@ -67,6 +78,18 @@ class Presentacion extends CI_Model {
         $this->db->select('a.*');
         $this->db->where('a.codigo', $codigo);
         return $this->db->get($this->tbl.' a');
+    }
+    
+    function get_control_stock($limit = NULL, $offset = 0, $filtro = NULL) {
+        $this->db->select('a.*', FALSE);
+        if(!empty($filtro)){
+                $this->db->or_like('a.nombre',$filtro);
+                $this->db->or_like('l.nombre',$filtro);
+        }
+        $this->db->where('a.stock','s');
+        $this->db->join('Linea l', 'a.id_linea = l.id_linea');
+        $this->db->order_by('a.nombre','asc');
+        return $this->db->get($this->tbl.' a', $limit, $offset);
     }
     
     /**
