@@ -116,6 +116,20 @@ class Venta extends CI_Model{
         return $this->db->get($this->tbl, 1);
     }
     
+    function get_acumulado_articulo( $id, $fecha = NULL, $hora = NULL){
+        $this->db->select('SUM(va.cantidad) AS cantidad', FALSE);
+        $this->db->join('Venta_Articulo va', 'v.id_venta = va.id_venta');
+        $this->db->join('Articulo a', 'va.id_articulo = a.id_articulo');
+        $this->db->where('a.id_articulo', $id);
+        if(!empty($fecha)){
+            $this->db->where('v.fecha >=', $fecha);
+        }
+        if(!empty($hora)){
+            $this->db->where('v.hora >=', $hora);
+        }
+        return $this->db->get($this->tbl.' v');
+    }
+    
     /**
     * ***********************************************************************
     * Actualizar recibo por id

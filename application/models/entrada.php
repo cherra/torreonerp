@@ -60,6 +60,17 @@ class Entrada extends CI_Model {
         return $this->db->get('Entrada_Almacen_Articulo eaa');
     }
     
+    function get_acumulado_articulo( $id, $fecha = NULL){
+        $this->db->select('SUM(eaa.cantidad) AS cantidad', FALSE);
+        $this->db->join('Entrada_Almacen_Articulo eaa', 'ea.id_entrada = eaa.id_entrada');
+        $this->db->join('Articulo a', 'eaa.id_articulo = a.id_articulo');
+        $this->db->where('a.id_articulo', $id);
+        if(!empty($fecha)){
+            $this->db->where('ea.fecha >=', $fecha);
+        }
+        return $this->db->get($this->tbl.' ea');
+    }
+    
     /**
     * Alta
     */

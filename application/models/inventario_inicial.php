@@ -60,8 +60,8 @@ class Inventario_inicial extends CI_Model {
     
     function get_last_by_id($id) {
         $this->db->where('id_articulo', $id);
-        $this->db->order_by('fecha', 'desc');
-        $this->db->order_by('hora', 'desc');
+        $this->db->order_by('id_inventario_presentacion', 'desc');
+        //$this->db->order_by('hora', 'desc');
         return $this->db->get($this->tbl, 1);
     }
     
