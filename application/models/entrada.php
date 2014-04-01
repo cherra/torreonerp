@@ -62,7 +62,7 @@ class Entrada extends CI_Model {
         return $this->db->get($this->tbl, $limit, $offset);
     }
     
-    function get_by_fecha( $desde, $hasta, $limit = NULL, $offset = 0, $filtro = null ){
+    function get_by_fecha( $desde, $hasta, $limit = NULL, $offset = 0, $filtro = null, $order_by_estado = FALSE ){
         $this->db->select('e.*, p.*, u.nombre AS usuario', FALSE);
         $this->db->join('Proveedor p','e.id_proveedor = p.id_proveedor');
         $this->db->join('Usuario u', 'e.id_usuario = u.id_usuario');
@@ -75,7 +75,9 @@ class Entrada extends CI_Model {
             $this->db->where($like);
         }
         $this->db->group_by('e.id_entrada');
-        $this->db->order_by('e.cancelada desc, e.id_entrada');
+        if($order_by_estado)
+            $this->db->order_by('e.cancelada asc');
+        $this->db->order_by('e.id_entrada');
         return $this->db->get($this->tbl.' e', $limit, $offset);
     }
     
