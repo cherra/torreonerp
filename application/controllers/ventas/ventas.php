@@ -55,7 +55,7 @@ class Ventas extends CI_Controller {
         $this->table->set_empty('&nbsp;');
         $tmpl = array ( 'table_open' => '<table class="' . $this->config->item('tabla_css') . '" >' );
         $this->table->set_template($tmpl);
-        $this->table->set_heading('Folio', 'Fecha', 'Hora', 'Cliente', 'Tipo', 'Caja', 'Usuario', 'Importe', 'C', '');
+        $this->table->set_heading('Folio', 'Fecha', 'Hora', 'Cliente', 'Tipo', 'Caja', 'Usuario', 'Importe', '');
         foreach ($datos as $d) {
             $this->table->add_row(
                     $d->id_venta,
@@ -66,9 +66,12 @@ class Ventas extends CI_Controller {
                     $d->caja,
                     $d->usuario,
                     array('data' => number_format((empty($d->monto) ? 0 : $d->monto),2), 'style' => 'text-align: right;'),
-                    array('data' => $d->cancelada, 'style' => 'text-align: center;'),
                     anchor($this->folder.$this->clase.'ver/' . $d->id_venta . '/' . $desde .'/'. $hasta. '/'. $offset, '<span class="'.$this->config->item('icono_editar').'"></span>')
             );
+            if($d->cancelada == 's')
+                $this->table->add_row_class ('danger');
+            else
+                $this->table->add_row_class ('');
         }
         $data['table'] = $this->table->generate();
     	
