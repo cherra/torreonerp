@@ -35,6 +35,26 @@ class Salida extends CI_Model{
         $query = $this->db->get($this->tbl.' v');
         return $query->num_rows();
     }
+    
+    function count_by_fecha( $desde, $hasta, $filtro = null ) {
+        $this->db->join('Cliente c','v.id_cliente = c.id_cliente');
+        $this->db->join('Usuario u', 'v.id_usuario = u.id_usuario');
+        $this->db->join('Empleado e','v.id_empleado = e.id_empleado');
+        $this->db->join('Caja ca', 'v.id_caja = ca.id_caja');
+        //$this->db->join('Venta_Articulo va', 'v.id_venta = va.id_venta');
+        $this->db->where('v.fecha BETWEEN "'.$desde.'" AND "'.$hasta.'"');
+        if(!empty($filtro)){
+            $like = '(c.nombre LIKE "%'.$filtro.'%" 
+                OR c.nombre_comercial LIKE "%'.$filtro.'%"
+                OR v.id_venta = "'.$filtro.'"
+                OR u.nombre LIKE "%'.$filtro.'%"
+                OR ca.nombre LIKE "%'.$filtro.'%")';
+            $this->db->where($like);
+        }
+        $this->db->group_by('v.id_venta');
+        $query = $this->db->get($this->tbl.' v');
+        return $query->num_rows();
+    }
 
     /**
     * ***********************************************************************
@@ -61,26 +81,24 @@ class Salida extends CI_Model{
         return $this->db->get($this->tbl.' v',$limit, $offset);
     }
     
-    function get_by_fecha( $desde, $hasta, $filtro = null ){
-        $this->db->select('v.*, c.*, CONCAT(u.nombre, " ", u.apellido) AS usuario, ca.nombre AS caja, CONCAT(e.nombre, " ", e.apellido) AS empleado, SUM(sa.cantidad) AS cantidad', FALSE);
-        $this->db->join('Salida_Articulo sa', 'v.id_venta = sa.id_venta');
+    function get_by_fecha( $desde, $hasta, $limit = NULL, $offset = 0, $filtro = null ){
+        $this->db->select('v.*, c.*, u.nombre AS usuario, ca.nombre AS caja, CONCAT(e.nombre, " ", e.apellido) AS empleado', FALSE);
         $this->db->join('Cliente c','v.id_cliente = c.id_cliente');
         $this->db->join('Usuario u', 'v.id_usuario = u.id_usuario');
         $this->db->join('Empleado e','v.id_empleado = e.id_empleado');
         $this->db->join('Caja ca', 'v.id_caja = ca.id_caja');
         $this->db->where('v.fecha BETWEEN "'.$desde.'" AND "'.$hasta.'"');
         if(!empty($filtro)){
-            $filtro = explode(' ', $filtro);
-            foreach($filtro as $f){
-                $like = '(c.nombre LIKE "%'.$f.'%" 
-                    OR c.nombre_comercial LIKE "%'.$f.'%"
-                    OR v.id_venta = "'.$f.'")';
-                $this->db->where($like);
-            }
+            $like = '(c.nombre LIKE "%'.$filtro.'%" 
+                OR c.nombre_comercial LIKE "%'.$filtro.'%"
+                OR v.id_venta = "'.$filtro.'"
+                OR u.nombre LIKE "%'.$filtro.'%"
+                OR ca.nombre LIKE "%'.$filtro.'%")';
+            $this->db->where($like);
         }
         $this->db->group_by('v.id_venta');
         $this->db->order_by('v.cancelada desc, ca.nombre, v.id_venta');
-        return $this->db->get($this->tbl.' v');
+        return $this->db->get($this->tbl.' v', $limit, $offset);
     }
     
     /**

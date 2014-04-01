@@ -39,7 +39,7 @@ class informes extends CI_Controller {
             $data['filtro'] = $post['filtro'];
             
             $this->load->model('salida','v');
-            $ventas = $this->v->get_by_fecha( $post['desde'], $post['hasta'], $post['filtro'] )->result();
+            $ventas = $this->v->get_by_fecha( $post['desde'], $post['hasta'], NULL, 0, $post['filtro'] )->result();
             
             if(empty($exportar)){
                 // generar tabla
@@ -66,14 +66,6 @@ class informes extends CI_Controller {
                     }
                     $caja = $v->caja;
                     
-                    if($v->cancelada == 's'){
-                        $clase = 'cancelado';
-                        $total_canceladas += $v->cantidad;
-                    }else{
-                        $clase = '';
-                        $total_vigentes += $v->cantidad;
-                        $total_caja += $v->cantidad;
-                    }
 
                     if($estatus != $v->cancelada){
                         // Total de facturas vigentes
@@ -132,9 +124,19 @@ class informes extends CI_Controller {
                             );
                         }
                         $i++;
+                        
+                        if($v->cancelada == 's'){
+                            $clase = 'cancelado';
+                            $total_canceladas += $articulo->cantidad;
+                        }else{
+                            $clase = '';
+                            $total_vigentes += $articulo->cantidad;
+                            $total_caja += $articulo->cantidad;
+                        }
+                        
+                        $total += $articulo->cantidad;
                     }
 
-                    $total += $v->cantidad;
                 }
 
                 if($estatus == 'n'){
