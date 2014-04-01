@@ -185,8 +185,8 @@ class Almacen extends CI_Controller {
         
         $this->load->model('salida','v');
         
-        $venta = $this->v->get_by_id($id);
-        if ( empty($id) OR $venta->num_rows() <= 0) {
+        $salida = $this->v->get_by_id($id);
+        if ( empty($id) OR $salida->num_rows() <= 0) {
             redirect($this->folder.$this->clase.'salidas');
     	}
     	
@@ -199,19 +199,35 @@ class Almacen extends CI_Controller {
         
     	$data['action'] = $this->folder.$this->clase.'salidas_editar/' . $id . '/'. $desde . '/'. $hasta. '/' . $offset;
 
-    	$data['datos'] = $venta->row();
+        $datos = $this->v->get_articulos($salida->row()->id_venta)->result();
+        // generar tabla
+        $this->load->library('table');
+        $this->table->set_empty('&nbsp;');
+        $tmpl = array ( 'table_open' => '<table class="' . $this->config->item('tabla_css') . '" >' );
+        $this->table->set_template($tmpl);
+        $this->table->set_heading('Código', 'Artículo', 'Cantidad');
+        foreach ($datos as $d) {
+            $this->table->add_row(
+                    $d->codigo,
+                    $d->nombre,
+                    $d->cantidad
+            );
+        }
+        $data['table'] = $this->table->generate();
+        
+    	$data['datos'] = $salida->row();
         $data['cliente'] = $this->c->get_by_id($data['datos']->id_cliente)->row();
         $data['usuario'] = $this->u->get_by_id($data['datos']->id_usuario)->row();
         $data['caja'] = $this->ca->get_by_id($data['datos']->id_caja)->row();
         
-        $this->load->view('almacen/ajustes/vista', $data);
+        $this->load->view('almacen/salidas/vista', $data);
     }
     
     public function salidas_editar( $id = NULL, $desde = NULL, $hasta = NULL, $offset = 0 ) {
         $this->load->model('salida','v');
         
-        $venta = $this->v->get_by_id($id);
-        if ( empty($id) OR $venta->num_rows() <= 0) {
+        $salida = $this->v->get_by_id($id);
+        if ( empty($id) OR $salida->num_rows() <= 0) {
             redirect($this->folder.$this->clase.'salidas');
     	}
         
@@ -225,6 +241,22 @@ class Almacen extends CI_Controller {
     	$data['mensaje'] = '';
     	$data['action'] = $this->folder.$this->clase.'salidas_editar/' . $id . '/'. $desde . '/'. $hasta. '/' . $offset;
     	 
+        $datos = $this->v->get_articulos($salida->row()->id_venta)->result();
+        // generar tabla
+        $this->load->library('table');
+        $this->table->set_empty('&nbsp;');
+        $tmpl = array ( 'table_open' => '<table class="' . $this->config->item('tabla_css') . '" >' );
+        $this->table->set_template($tmpl);
+        $this->table->set_heading('Código', 'Artículo', 'Cantidad');
+        foreach ($datos as $d) {
+            $this->table->add_row(
+                    $d->codigo,
+                    $d->nombre,
+                    $d->cantidad
+            );
+        }
+        $data['table'] = $this->table->generate();
+        
     	if ( ($datos = $this->input->post()) ) {
             $this->v->update($id, $datos);
             $this->session->set_flashdata('mensaje',$this->config->item('update_success'));
@@ -236,7 +268,7 @@ class Almacen extends CI_Controller {
         $data['usuario'] = $this->u->get_by_id($data['datos']->id_usuario)->row();
         $data['caja'] = $this->ca->get_by_id($data['datos']->id_caja)->row();
         
-        $this->load->view('almacen/ajustes/formulario', $data);
+        $this->load->view('almacen/salidas/formulario', $data);
     }
     
     public function entradas( $desde = NULL, $hasta = NULL, $offset = 0 ){
