@@ -98,6 +98,7 @@ class Entrada extends CI_Model {
         $this->db->select('SUM(eaa.cantidad) AS cantidad', FALSE);
         $this->db->join('Entrada_Almacen_Articulo eaa', 'ea.id_entrada = eaa.id_entrada');
         $this->db->join('Articulo a', 'eaa.id_articulo = a.id_articulo');
+        $this->db->where('ea.cancelada','n');
         $this->db->where('a.id_articulo', $id);
         if(!empty($fecha)){
             $this->db->where('ea.fecha >=', $fecha);

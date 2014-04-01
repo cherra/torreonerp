@@ -127,6 +127,7 @@ class Salida extends CI_Model{
         $this->db->select('SUM(sa.cantidad) AS cantidad', FALSE);
         $this->db->join('Salida_Articulo sa', 's.id_venta = sa.id_venta');
         $this->db->join('Articulo a', 'sa.id_articulo = a.id_articulo');
+        $this->db->where('s.cancelada', 'n');
         $this->db->where('a.id_articulo', $id);
         if(!empty($fecha)){
             $this->db->where('s.fecha >=', $fecha);
