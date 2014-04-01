@@ -23,6 +23,23 @@ class Entrada extends CI_Model {
         return $query->num_rows();
     }
     
+    function count_by_fecha( $desde, $hasta, $limit = NULL, $offset = 0, $filtro = null ){
+        $this->db->select('e.*, p.*, u.nombre AS usuario', FALSE);
+        $this->db->join('Proveedor p','e.id_proveedor = p.id_proveedor');
+        $this->db->join('Usuario u', 'e.id_usuario = u.id_usuario');
+        $this->db->where('e.fecha BETWEEN "'.$desde.'" AND "'.$hasta.'"');
+        if(!empty($filtro)){
+            $like = '(p.nombre LIKE "%'.$filtro.'%" 
+                OR p.nombre_comercial LIKE "%'.$filtro.'%"
+                OR e.id_entrada = "'.$filtro.'"
+                OR u.nombre LIKE "%'.$filtro.'%")';
+            $this->db->where($like);
+        }
+        $this->db->group_by('e.id_entrada');
+        $query = $this->db->get($this->tbl.' e', $limit, $offset);
+        return $query->num_rows();
+    }
+    
     /**
      *  Obtiene todos los registros de la tabla
      */
@@ -43,6 +60,23 @@ class Entrada extends CI_Model {
         }
         $this->db->order_by('id_entrada','asc');
         return $this->db->get($this->tbl, $limit, $offset);
+    }
+    
+    function get_by_fecha( $desde, $hasta, $limit = NULL, $offset = 0, $filtro = null ){
+        $this->db->select('e.*, p.*, u.nombre AS usuario', FALSE);
+        $this->db->join('Proveedor p','e.id_proveedor = p.id_proveedor');
+        $this->db->join('Usuario u', 'e.id_usuario = u.id_usuario');
+        $this->db->where('e.fecha BETWEEN "'.$desde.'" AND "'.$hasta.'"');
+        if(!empty($filtro)){
+            $like = '(p.nombre LIKE "%'.$filtro.'%" 
+                OR p.nombre_comercial LIKE "%'.$filtro.'%"
+                OR e.id_entrada = "'.$filtro.'"
+                OR u.nombre LIKE "%'.$filtro.'%")';
+            $this->db->where($like);
+        }
+        $this->db->group_by('e.id_entrada');
+        $this->db->order_by('e.cancelada desc, e.id_entrada');
+        return $this->db->get($this->tbl.' e', $limit, $offset);
     }
     
     /**
@@ -83,7 +117,7 @@ class Entrada extends CI_Model {
     * Actualizar por id
     */
     function update($id, $datos) {
-        $this->db->where('id_entrada_almacen_articulo', $id);
+        $this->db->where('id_entrada', $id);
         $this->db->update($this->tbl, $datos);
     }
 
@@ -91,7 +125,7 @@ class Entrada extends CI_Model {
     * Eliminar por id
     */
     function delete($id) {
-        $this->db->where('id_entrada_almacen_articulo', $id);
+        $this->db->where('id_entrada', $id);
         $this->db->delete($this->tbl);
     } 
 }

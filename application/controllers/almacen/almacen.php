@@ -239,6 +239,145 @@ class Almacen extends CI_Controller {
         $this->load->view('almacen/ajustes/formulario', $data);
     }
     
+    public function entradas( $desde = NULL, $hasta = NULL, $offset = 0 ){
+        $this->load->model('entrada','e');
+        
+        $this->config->load("pagination");
+    	
+        $data['titulo'] = 'Ajustes de entradas <small>Lista</small>';
+        if(empty($desde))
+            $desde = date('Y-m-d');
+        if(empty($hasta))
+            $hasta = date('Y-m-d');
+    	//$data['link_add'] = $this->folder.$this->clase.'lineas_agregar/'. $offset;
+    	$data['action'] = $this->folder.$this->clase.'entradas';
+
+        // Filtro de busqueda (se almacenan en la sesión a través de un hook)
+        $filtro = $this->session->userdata('filtro');
+        if($filtro)
+            $data['filtro'] = $filtro;
+
+        $data['desde'] = $desde;
+        $data['hasta'] = $hasta;
+        $page_limit = $this->config->item("per_page");
+        $datos = $this->e->get_by_fecha($desde, $hasta, $page_limit, $offset, $filtro)->result();
+
+        // generar paginacion
+        $this->load->library('pagination');
+        $config['base_url'] = site_url($this->folder.$this->clase.'entradas/'.$desde.'/'.$hasta);
+        $config['total_rows'] = $this->e->count_by_fecha($desde, $hasta, $filtro);
+        $config['per_page'] = $page_limit;
+        $config['uri_segment'] = 6;
+        $this->pagination->initialize($config);
+        $data['pagination'] = $this->pagination->create_links();
+
+        // generar tabla
+        $this->load->library('table');
+        $this->table->set_empty('&nbsp;');
+        $tmpl = array ( 'table_open' => '<table class="' . $this->config->item('tabla_css') . '" >' );
+        $this->table->set_template($tmpl);
+        $this->table->set_heading('Folio', 'Fecha', 'Proveedor', 'Usuario', 'C', '');
+        foreach ($datos as $d) {
+            $this->table->add_row(
+                    $d->id_entrada,
+                    $d->fecha,
+                    $d->razon_social,
+                    $d->usuario,
+                    array('data' => $d->cancelada, 'style' => 'text-align: center;'),
+                    anchor($this->folder.$this->clase.'entradas_ver/' . $d->id_entrada . '/' . $desde .'/'. $hasta. '/'. $offset, '<span class="'.$this->config->item('icono_editar').'"></span>')
+            );
+        }
+        $data['table'] = $this->table->generate();
+    	
+    	$this->load->view('lista_fechas', $data);
+    }
+    
+    public function entradas_ver( $id = NULL, $desde = NULL, $hasta = NULL, $offset = 0 ){
+        
+        $this->load->model('entrada','e');
+        
+        $entrada = $this->e->get_by_id($id);
+        if ( empty($id) OR $entrada->num_rows() <= 0) {
+            redirect($this->folder.$this->clase.'entradas');
+    	}
+    	
+        $this->load->model('catalogos/proveedor','p');
+        $this->load->model('usuario','u');
+        
+    	$data['titulo'] = 'Entradas <small>Ver registro</small>';
+    	$data['link_back'] = $this->folder.$this->clase.'entradas/' . $desde . '/'. $hasta.'/'. $offset;
+        
+    	$data['action'] = $this->folder.$this->clase.'entradas_editar/' . $id . '/'. $desde . '/'. $hasta. '/' . $offset;
+
+        $datos = $this->e->get_articulos($entrada->row()->id_entrada)->result();
+        // generar tabla
+        $this->load->library('table');
+        $this->table->set_empty('&nbsp;');
+        $tmpl = array ( 'table_open' => '<table class="' . $this->config->item('tabla_css') . '" >' );
+        $this->table->set_template($tmpl);
+        $this->table->set_heading('Código', 'Artículo', 'Cantidad');
+        foreach ($datos as $d) {
+            $this->table->add_row(
+                    $d->codigo,
+                    $d->nombre,
+                    $d->cantidad
+            );
+        }
+        $data['table'] = $this->table->generate();
+        
+    	$data['datos'] = $entrada->row();
+        $data['proveedor'] = $this->p->get_by_id($data['datos']->id_proveedor)->row();
+        $data['usuario'] = $this->u->get_by_id($data['datos']->id_usuario)->row();
+        
+        $this->load->view('almacen/entradas/vista', $data);
+    }
+    
+    public function entradas_editar( $id = NULL, $desde = NULL, $hasta = NULL, $offset = 0 ) {
+        $this->load->model('entrada','e');
+        
+        $entrada = $this->e->get_by_id($id);
+        if ( empty($id) OR $entrada->num_rows() <= 0) {
+            redirect($this->folder.$this->clase.'entradas');
+    	}
+        
+        $this->load->model('catalogos/proveedor','p');
+        $this->load->model('usuario','u');
+        
+        $data['titulo'] = 'Entradas <small>Editar registro</small>';
+    	$data['link_back'] = $this->folder.$this->clase.'entradas_ver/'.$id . '/'. $desde . '/'. $hasta.'/' . $offset;
+    	
+    	$data['mensaje'] = '';
+    	$data['action'] = $this->folder.$this->clase.'entradas_editar/' . $id . '/'. $desde . '/'. $hasta. '/' . $offset;
+    	
+        $datos = $this->e->get_articulos($entrada->row()->id_entrada)->result();
+        // generar tabla
+        $this->load->library('table');
+        $this->table->set_empty('&nbsp;');
+        $tmpl = array ( 'table_open' => '<table class="' . $this->config->item('tabla_css') . '" >' );
+        $this->table->set_template($tmpl);
+        $this->table->set_heading('Código', 'Artículo', 'Cantidad');
+        foreach ($datos as $d) {
+            $this->table->add_row(
+                    $d->codigo,
+                    $d->nombre,
+                    $d->cantidad
+            );
+        }
+        $data['table'] = $this->table->generate();
+        
+    	if ( ($datos = $this->input->post()) ) {
+            $this->e->update($id, $datos);
+            $this->session->set_flashdata('mensaje',$this->config->item('update_success'));
+            redirect($this->folder.$this->clase.'entradas_ver/'.$id . '/'. $desde . '/'. $hasta .'/' . $offset);
+    	}
+
+        $data['datos'] = $this->e->get_by_id($id)->row();
+        $data['proveedor'] = $this->p->get_by_id($data['datos']->id_proveedor)->row();
+        $data['usuario'] = $this->u->get_by_id($data['datos']->id_usuario)->row();
+        
+        $this->load->view('almacen/entradas/formulario', $data);
+    }
+    
     public function existencias( $offset = 0 ){
         
         $this->load->model('catalogos/linea','l');
