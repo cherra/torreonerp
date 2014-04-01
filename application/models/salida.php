@@ -81,7 +81,7 @@ class Salida extends CI_Model{
         return $this->db->get($this->tbl.' v',$limit, $offset);
     }
     
-    function get_by_fecha( $desde, $hasta, $limit = NULL, $offset = 0, $filtro = null ){
+    function get_by_fecha( $desde, $hasta, $limit = NULL, $offset = 0, $filtro = null, $order_by_estado = FALSE ){
         $this->db->select('v.*, c.*, u.nombre AS usuario, ca.nombre AS caja, CONCAT(e.nombre, " ", e.apellido) AS empleado', FALSE);
         $this->db->join('Cliente c','v.id_cliente = c.id_cliente');
         $this->db->join('Usuario u', 'v.id_usuario = u.id_usuario');
@@ -97,7 +97,9 @@ class Salida extends CI_Model{
             $this->db->where($like);
         }
         $this->db->group_by('v.id_venta');
-        $this->db->order_by('v.cancelada desc, ca.nombre, v.id_venta');
+        if($order_by_estado)
+            $this->db->order_by('v.cancelada desc');
+        $this->db->order_by('ca.nombre, v.id_venta');
         return $this->db->get($this->tbl.' v', $limit, $offset);
     }
     

@@ -39,7 +39,7 @@ class informes extends CI_Controller {
             $data['filtro'] = $post['filtro'];
             
             $this->load->model('salida','v');
-            $ventas = $this->v->get_by_fecha( $post['desde'], $post['hasta'], NULL, 0, $post['filtro'] )->result();
+            $ventas = $this->v->get_by_fecha( $post['desde'], $post['hasta'], NULL, 0, $post['filtro'], TRUE )->result();
             
             if(empty($exportar)){
                 // generar tabla
@@ -90,17 +90,7 @@ class informes extends CI_Controller {
                     
 
                     $fecha = date_create($v->fecha);
-//                    $this->table->add_row(
-//                        array('data' => $v->id_venta,'class' => $clase),
-//                        array('data' => date_format($fecha,'d/m/Y'),'class' => $clase),
-//                        array('data' => $v->caja,'class' => $clase),
-//                        array('data' => $v->usuario,'class' => $clase),
-//                        array('data' => $v->nombre,'class' => $clase),
-//                        ''
-//                    );
-//
-//                    $this->table->add_row_class($clase);
-                    
+
                     $articulos = $this->v->get_articulos($v->id_venta)->result();
                     $i = 0;
                     foreach($articulos as $articulo){
@@ -233,16 +223,6 @@ class informes extends CI_Controller {
                 $this->excel->getActiveSheet()->getColumnDimension('D')->setAutoSize(true);
                 $this->excel->getActiveSheet()->getColumnDimension('E')->setAutoSize(true);
                 $this->excel->getActiveSheet()->getColumnDimension('F')->setAutoSize(true);
-                //set cell A1 content with some text
-//                $this->excel->getActiveSheet()->setCellValue('A1', 'This is just some text value');
-//                //change the font size
-//                $this->excel->getActiveSheet()->getStyle('A1')->getFont()->setSize(20);
-//                //make the font become bold
-//                $this->excel->getActiveSheet()->getStyle('A1')->getFont()->setBold(true);
-//                //merge cell A1 until D1
-//                $this->excel->getActiveSheet()->mergeCells('A1:D1');
-//                //set aligment to center for that merged cell (A1 to D1)
-//                $this->excel->getActiveSheet()->getStyle('A1')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
 
                 $filename='reporte_de_salidas.xls'; //save our workbook as this file name
                 header('Content-Type: application/vnd.ms-excel'); //mime type
