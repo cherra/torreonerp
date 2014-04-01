@@ -98,6 +98,13 @@ class Salida extends CI_Model{
         return $this->db->get($this->tbl, 1);
     }
     
+    function get_articulos( $id = NULL ){
+        $this->db->join('Articulo a','sa.id_articulo = a.id_articulo');
+        $this->db->where('sa.id_venta',$id);
+        $this->db->order_by('sa.id_venta_articulo');
+        return $this->db->get('Salida_Articulo sa');
+    }
+    
     /**
     * ***********************************************************************
     * Actualizar recibo por id
