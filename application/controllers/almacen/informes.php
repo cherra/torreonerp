@@ -270,18 +270,6 @@ class informes extends CI_Controller {
                 $clase = '';
                 foreach ($entradas as $v){
 
-//                    if($caja != '' && $caja != $v->caja){
-//                        if($v->cancelada == 'n' OR $estatus != $v->cancelada){
-//                            $this->table->add_row( '', '', '', '<h6>Total caja</h6>', array('data' => '<h6>'.number_format($total_caja,2).'</h6>', 'style' => 'text-align: right;'));
-//                            $this->table->add_row_class($clase);
-//                            $this->table->add_row( array('data' => '', 'colspan' => '5'));
-//                            $this->table->add_row_class($clase);
-//                            $total_caja = 0;
-//                        }
-//                    }
-//                    $caja = $v->caja;
-                    
-
                     if($estatus != $v->cancelada){
                         // Total de facturas vigentes
                         if($v->cancelada == 's'){
@@ -448,6 +436,174 @@ class informes extends CI_Controller {
         }
         $data['titulo'] = 'Reporte de entradas de almacén <small>Listado</small>';
         $this->load->view('informes/listado', $data);
+    }
+    
+    public function existencias( $exportar = NULL ){
+        $data['reporte'] = '';
+        $data['action'] = $this->folder.$this->clase.'existencias/';
+        
+        if( ($post = $this->input->post()) ){
+            date_default_timezone_set('America/Mexico_City'); // Zona horaria
+            
+            $data['filtro'] = $post['filtro'];
+            
+            $this->load->model('catalogos/linea','l');
+            $this->load->model('catalogos/presentacion','p');
+            $this->load->model('inventario_inicial','ii');
+            $this->load->model('salida','s');
+            $this->load->model('entrada','e');
+            $this->load->model('venta','v');
+            $articulos = $this->p->get_control_stock( NULL, 0, $post['filtro'] )->result();
+            
+            if(empty($exportar)){
+                // generar tabla
+                $this->load->library('table');
+                $this->table->set_empty('&nbsp;');
+
+                $tmpl = array ( 'table_open' => '<table class="table table-condensed" >' );
+                $this->table->set_template($tmpl);
+                $this->table->set_heading('Código', 'Nombre', 'Tipo', 'Línea', 'Fecha', 'Hora', 'Stock Inicial', 'Entradas', 'Salidas', 'Ventas', 'Existencia');
+                //$total = $total_vigentes = $total_canceladas = $total_caja = $total_caja_canceladas = 0;
+                $estatus = 'n';
+                foreach ($articulos as $d){
+                    $stock = 0;
+                    $linea = $this->l->get_by_id($d->id_linea)->row();
+                    $inventario_inicial = $this->ii->get_last_by_id($d->id_articulo)->row();
+                    $entradas = $this->e->get_acumulado_articulo($d->id_articulo, !empty($inventario_inicial) ? $inventario_inicial->fecha.' '.$inventario_inicial->hora : NULL)->row();
+                    $salidas = $this->s->get_acumulado_articulo($d->id_articulo, !empty($inventario_inicial) ? $inventario_inicial->fecha : NULL, !empty($inventario_inicial) ? $inventario_inicial->hora : NULL)->row();
+                    $ventas = $this->v->get_acumulado_articulo($d->id_articulo, !empty($inventario_inicial) ? $inventario_inicial->fecha : NULL, !empty($inventario_inicial) ? $inventario_inicial->hora : NULL)->row();
+                    $stock += !empty($inventario_inicial) ? $inventario_inicial->cantidad : 0;
+                    $stock += !empty($entradas) ? $entradas->cantidad : 0;
+                    $stock -= !empty($salidas) ? $salidas->cantidad : 0;
+                    $stock -= !empty($ventas) ? $ventas->cantidad : 0;
+                
+                    //$fecha = date_create($v->fecha);
+
+                    //$articulos = $this->v->get_articulos($v->id_venta)->result();
+                    
+                    $this->table->add_row(
+                        $d->nombre,
+                        $d->codigo,
+                        $d->tipo,
+                        (!empty($linea->nombre) ? $linea->nombre : ''),
+                        !empty($inventario_inicial->fecha) ? $inventario_inicial->fecha : '',
+                        !empty($inventario_inicial->hora) ? $inventario_inicial->hora : '',
+                        !empty($inventario_inicial->cantidad) ? array('data' => number_format($inventario_inicial->cantidad, 2), 'class' => 'text-right') : '',
+                        !empty($entradas->cantidad) ? array('data' => number_format($entradas->cantidad, 2), 'class' => 'text-right') : '',
+                        !empty($salidas->cantidad) ? array('data' => number_format($salidas->cantidad, 2), 'class' => 'text-right') : '',
+                        !empty($ventas->cantidad) ? array('data' => number_format($ventas->cantidad, 2), 'class' => 'text-right') : '',
+                        array('data' => '<strong>'.number_format($stock, 2).'</strong>', 'class' => 'text-right')
+                    );
+                }
+
+                $tabla = $this->table->generate();
+            
+                $this->load->library('tbs');
+                $this->load->library('pdf');
+
+                // Se obtiene la plantilla (2° parametro se pone false para evitar que haga conversión de caractéres con htmlspecialchars() )
+                $this->tbs->LoadTemplate($this->configuracion->get_valor('template_path').$this->configuracion->get_valor('template_informes'), false);
+
+                // Se sustituyen los campos en el template
+                $this->tbs->VarRef['titulo'] = 'Reporte de existencias';
+                $this->tbs->VarRef['fecha'] = date('d/m/Y H:i:s');
+                $this->tbs->VarRef['database'] = $this->session->userdata('basededatos');
+                $this->tbs->VarRef['subtitulo'] = '';
+                $this->tbs->VarRef['contenido'] = $tabla;
+
+                $this->tbs->Show(TBS_NOTHING);
+
+                // Se regresa el render
+                $output = $this->tbs->Source;
+
+                $view = str_replace("{contenido_vista}", $output, $this->template);
+
+                // PDF
+                $this->pdf->pagenumSuffix = '/';
+                $this->pdf->SetHeader('{PAGENO}{nbpg}');
+                $pdf = $this->pdf->render($view);
+                //$pdf = $view;
+
+                $fp = fopen($this->configuracion->get_valor('asset_path').$this->configuracion->get_valor('tmp_path').'existencias.pdf','w');
+                fwrite($fp, $pdf);
+                fclose($fp);
+                $data['reporte'] = 'existencias.pdf';
+            }else{
+                $this->load->library('excel');
+                //activate worksheet number 1
+                $this->excel->setActiveSheetIndex(0);
+                //name the worksheet
+                $this->excel->getActiveSheet()->setTitle('Reporte de existencias');
+                
+                $this->excel->getActiveSheet()->setCellValue('A1', 'Código');
+                $this->excel->getActiveSheet()->setCellValue('B1', 'Nombre');
+                $this->excel->getActiveSheet()->setCellValue('C1', 'Tipo');
+                $this->excel->getActiveSheet()->setCellValue('D1', 'Línea');
+                $this->excel->getActiveSheet()->setCellValue('E1', 'Fecha');
+                $this->excel->getActiveSheet()->setCellValue('F1', 'Hora');
+                $this->excel->getActiveSheet()->setCellValue('G1', 'Stock inicial');
+                $this->excel->getActiveSheet()->setCellValue('H1', 'Entradas');
+                $this->excel->getActiveSheet()->setCellValue('I1', 'Salidas');
+                $this->excel->getActiveSheet()->setCellValue('J1', 'Ventas');
+                $this->excel->getActiveSheet()->setCellValue('K1', 'Existencia');
+                
+                $fila = 2;
+                foreach ($articulos as $d){
+                    $stock = 0;
+                    $linea = $this->l->get_by_id($d->id_linea)->row();
+                    $inventario_inicial = $this->ii->get_last_by_id($d->id_articulo)->row();
+                    $entradas = $this->e->get_acumulado_articulo($d->id_articulo, !empty($inventario_inicial) ? $inventario_inicial->fecha.' '.$inventario_inicial->hora : NULL)->row();
+                    $salidas = $this->s->get_acumulado_articulo($d->id_articulo, !empty($inventario_inicial) ? $inventario_inicial->fecha : NULL, !empty($inventario_inicial) ? $inventario_inicial->hora : NULL)->row();
+                    $ventas = $this->v->get_acumulado_articulo($d->id_articulo, !empty($inventario_inicial) ? $inventario_inicial->fecha : NULL, !empty($inventario_inicial) ? $inventario_inicial->hora : NULL)->row();
+                    $stock += !empty($inventario_inicial) ? $inventario_inicial->cantidad : 0;
+                    $stock += !empty($entradas) ? $entradas->cantidad : 0;
+                    $stock -= !empty($salidas) ? $salidas->cantidad : 0;
+                    $stock -= !empty($ventas) ? $ventas->cantidad : 0;
+                
+                    //$fecha = date_create($v->fecha);
+
+                    //$articulos = $this->v->get_articulos($v->id_venta)->result();
+                    $this->excel->getActiveSheet()->setCellValue('A'.$fila, $d->nombre);
+                    $this->excel->getActiveSheet()->setCellValue('B'.$fila, $d->codigo);
+                    $this->excel->getActiveSheet()->setCellValue('C'.$fila, $d->tipo);
+                    $this->excel->getActiveSheet()->setCellValue('D'.$fila, !empty($linea->nombre) ? $linea->nombre : '');
+                    $this->excel->getActiveSheet()->setCellValue('E'.$fila, !empty($inventario_inicial->fecha) ? $inventario_inicial->fecha : '');
+                    $this->excel->getActiveSheet()->setCellValue('F'.$fila, !empty($inventario_inicial->hora) ? $inventario_inicial->hora : '');
+                    $this->excel->getActiveSheet()->setCellValue('G'.$fila, !empty($inventario_inicial->cantidad) ? number_format($inventario_inicial->cantidad, 2, '.', '') : '');
+                    $this->excel->getActiveSheet()->setCellValue('H'.$fila, !empty($entradas->cantidad) ? number_format($entradas->cantidad, 2, '.', '') : '');
+                    $this->excel->getActiveSheet()->setCellValue('I'.$fila, !empty($salidas->cantidad) ? number_format($salidas->cantidad, 2, '.', '') : '');
+                    $this->excel->getActiveSheet()->setCellValue('J'.$fila, !empty($ventas->cantidad) ? number_format($ventas->cantidad, 2, '.', '') : '');
+                    $this->excel->getActiveSheet()->setCellValue('K'.$fila, number_format($stock, 2, '.', ''));
+                    
+                    $fila++;
+                }
+                
+                $this->excel->getActiveSheet()->getColumnDimension('A')->setAutoSize(true);
+                $this->excel->getActiveSheet()->getColumnDimension('B')->setAutoSize(true);
+                $this->excel->getActiveSheet()->getColumnDimension('C')->setAutoSize(true);
+                $this->excel->getActiveSheet()->getColumnDimension('D')->setAutoSize(true);
+                $this->excel->getActiveSheet()->getColumnDimension('E')->setAutoSize(true);
+                $this->excel->getActiveSheet()->getColumnDimension('F')->setAutoSize(true);
+                $this->excel->getActiveSheet()->getColumnDimension('G')->setAutoSize(true);
+                $this->excel->getActiveSheet()->getColumnDimension('H')->setAutoSize(true);
+                $this->excel->getActiveSheet()->getColumnDimension('I')->setAutoSize(true);
+                $this->excel->getActiveSheet()->getColumnDimension('J')->setAutoSize(true);
+                $this->excel->getActiveSheet()->getColumnDimension('K')->setAutoSize(true);
+
+                $filename='reporte_de_existencias.xls'; //save our workbook as this file name
+                header('Content-Type: application/vnd.ms-excel'); //mime type
+                header('Content-Disposition: attachment;filename="'.$filename.'"'); //tell browser what's the file name
+                header('Cache-Control: max-age=0'); //no cache
+
+                //save it to Excel5 format (excel 2003 .XLS file), change this to 'Excel2007' (and adjust the filename extension, also the header mime type)
+                //if you want to save it as .XLSX Excel 2007 format
+                $objWriter = PHPExcel_IOFactory::createWriter($this->excel, 'Excel5');  
+                //force user to download the Excel file without writing it to server's HD
+                $objWriter->save('php://output');
+            }
+        }
+        $data['titulo'] = 'Reporte de existencias <small>Listado</small>';
+        $this->load->view('informes/listado_sin_fechas', $data);
     }
 }
 ?>
