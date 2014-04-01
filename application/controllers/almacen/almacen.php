@@ -163,7 +163,7 @@ class Almacen extends CI_Controller {
         $this->table->set_empty('&nbsp;');
         $tmpl = array ( 'table_open' => '<table class="' . $this->config->item('tabla_css') . '" >' );
         $this->table->set_template($tmpl);
-        $this->table->set_heading('Folio', 'Fecha', 'Hora', 'Cliente', 'Caja', 'Usuario', 'C', '');
+        $this->table->set_heading('Folio', 'Fecha', 'Hora', 'Cliente', 'Caja', 'Usuario', '');
         foreach ($datos as $d) {
             $this->table->add_row(
                     $d->id_venta,
@@ -172,9 +172,12 @@ class Almacen extends CI_Controller {
                     $d->nombre,
                     $d->caja,
                     $d->usuario,
-                    array('data' => $d->cancelada, 'style' => 'text-align: center;'),
                     anchor($this->folder.$this->clase.'salidas_ver/' . $d->id_venta . '/' . $desde .'/'. $hasta. '/'. $offset, '<span class="'.$this->config->item('icono_editar').'"></span>')
             );
+            if($d->cancelada == 's')
+                $this->table->add_row_class ('danger');
+            else
+                $this->table->add_row_class ('');
         }
         $data['table'] = $this->table->generate();
     	
@@ -308,16 +311,19 @@ class Almacen extends CI_Controller {
         $this->table->set_empty('&nbsp;');
         $tmpl = array ( 'table_open' => '<table class="' . $this->config->item('tabla_css') . '" >' );
         $this->table->set_template($tmpl);
-        $this->table->set_heading('Folio', 'Fecha', 'Proveedor', 'Usuario', 'C', '');
+        $this->table->set_heading('Folio', 'Fecha', 'Proveedor', 'Usuario', '');
         foreach ($datos as $d) {
             $this->table->add_row(
                     $d->id_entrada,
                     $d->fecha,
                     $d->razon_social,
                     $d->usuario,
-                    array('data' => $d->cancelada, 'style' => 'text-align: center;'),
                     anchor($this->folder.$this->clase.'entradas_ver/' . $d->id_entrada . '/' . $desde .'/'. $hasta. '/'. $offset, '<span class="'.$this->config->item('icono_editar').'"></span>')
             );
+            if($d->cancelada == 's')
+                $this->table->add_row_class ('danger');
+            else
+                $this->table->add_row_class ('');
         }
         $data['table'] = $this->table->generate();
     	
