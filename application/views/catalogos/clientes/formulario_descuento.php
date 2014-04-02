@@ -58,7 +58,7 @@ $(function () {
     $('#descuento').focus();
     
     $('#id_articulo').change(function(){
-        document.location = "<?php echo site_url('catalogos/ventas/clientes_descuentos_agregar').'/'.$cliente->id_cliente.'/'.$offset.'/';  ?>"+$(this).val();
+        document.location = "<?php echo site_url('ventas/clientes/descuentos_agregar').'/'.$cliente->id_cliente.'/'.$offset.'/';  ?>"+$(this).val();
     });
     
 });
