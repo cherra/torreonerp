@@ -18,7 +18,7 @@ class Ventas extends CI_Controller {
         $this->load->view('vacio');
     }
     
-    public function lista( $desde = NULL, $hasta = NULL, $offset = 0 ){
+    public function lista( $desde = NULL, $hasta = NULL, $tipo = NULL, $offset = 0 ){
         $this->load->model('venta','v');
         
         $this->config->load("pagination");
@@ -38,13 +38,14 @@ class Ventas extends CI_Controller {
 
         $data['desde'] = $desde;
         $data['hasta'] = $hasta;
+        $data['tipo'] = $tipo;
         $page_limit = $this->config->item("per_page");
-        $datos = $this->v->get_by_fecha($desde, $hasta, $page_limit, $offset, $filtro)->result();
+        $datos = $this->v->get_by_fecha($desde, $hasta, $tipo, $filtro, $page_limit, $offset)->result();
 
         // generar paginacion
         $this->load->library('pagination');
-        $config['base_url'] = site_url($this->folder.$this->clase.'lista/'.$desde.'/'.$hasta);
-        $config['total_rows'] = $this->v->count_by_fecha($desde, $hasta, $filtro);
+        $config['base_url'] = site_url($this->folder.$this->clase.'lista/'.$desde.'/'.$hasta.'/'.$tipo);
+        $config['total_rows'] = $this->v->count_by_fecha($desde, $hasta, $tipo, $filtro);
         $config['per_page'] = $page_limit;
         $config['uri_segment'] = 6;
         $this->pagination->initialize($config);
@@ -66,7 +67,7 @@ class Ventas extends CI_Controller {
                     $d->caja,
                     $d->usuario,
                     array('data' => number_format((empty($d->monto) ? 0 : $d->monto),2), 'style' => 'text-align: right;'),
-                    anchor($this->folder.$this->clase.'ver/' . $d->id_venta . '/' . $desde .'/'. $hasta. '/'. $offset, '<span class="'.$this->config->item('icono_editar').'"></span>')
+                    anchor($this->folder.$this->clase.'ver/' . $d->id_venta . '/' . $desde .'/'. $hasta.'/'.$tipo. '/'. $offset, '<span class="'.$this->config->item('icono_editar').'"></span>')
             );
             if($d->cancelada == 's')
                 $this->table->add_row_class ('danger');
@@ -75,10 +76,10 @@ class Ventas extends CI_Controller {
         }
         $data['table'] = $this->table->generate();
     	
-    	$this->load->view('lista_fechas', $data);
+    	$this->load->view('ventas/ajustes/lista', $data);
     }
     
-    public function ver( $id = NULL, $desde = NULL, $hasta = NULL, $offset = 0 ){
+    public function ver( $id = NULL, $desde = NULL, $hasta = NULL, $tipo = NULL, $offset = 0 ){
         
         $this->load->model('venta','v');
         
@@ -92,9 +93,9 @@ class Ventas extends CI_Controller {
         $this->load->model('usuario','u');
         
     	$data['titulo'] = 'Ventas <small>Ver registro</small>';
-    	$data['link_back'] = $this->folder.$this->clase.'lista/' . $desde . '/'. $hasta.'/'. $offset;
+    	$data['link_back'] = $this->folder.$this->clase.'lista/' . $desde . '/'. $hasta.'/'.$tipo.'/'. $offset;
         
-    	$data['action'] = $this->folder.$this->clase.'editar/' . $id . '/'. $desde . '/'. $hasta. '/' . $offset;
+    	$data['action'] = $this->folder.$this->clase.'editar/' . $id . '/'. $desde . '/'. $hasta.'/'.$tipo. '/' . $offset;
 
     	$data['datos'] = $venta->row();
         $data['cliente'] = $this->c->get_by_id($data['datos']->id_cliente)->row();
@@ -104,7 +105,7 @@ class Ventas extends CI_Controller {
         $this->load->view('ventas/ajustes/vista', $data);
     }
     
-    public function editar( $id = NULL, $desde = NULL, $hasta = NULL, $offset = 0 ) {
+    public function editar( $id = NULL, $desde = NULL, $hasta = NULL, $tipo = NULL, $offset = 0 ) {
         $this->load->model('venta','v');
         
         $venta = $this->v->get_by_id($id);
@@ -117,15 +118,15 @@ class Ventas extends CI_Controller {
         $this->load->model('usuario','u');
         
         $data['titulo'] = 'Ventas <small>Editar registro</small>';
-    	$data['link_back'] = $this->folder.$this->clase.'ver/'.$id . '/'. $desde . '/'. $hasta.'/' . $offset;
+    	$data['link_back'] = $this->folder.$this->clase.'ver/'.$id . '/'. $desde . '/'. $hasta.'/'.$tipo.'/' . $offset;
     	
     	$data['mensaje'] = '';
-    	$data['action'] = $this->folder.$this->clase.'editar/' . $id . '/'. $desde . '/'. $hasta. '/' . $offset;
+    	$data['action'] = $this->folder.$this->clase.'editar/' . $id . '/'. $desde . '/'. $hasta.'/'.$tipo. '/' . $offset;
     	 
     	if ( ($datos = $this->input->post()) ) {
             $this->v->update($id, $datos);
             $this->session->set_flashdata('mensaje',$this->config->item('update_success'));
-            redirect($this->folder.$this->clase.'ver/'.$id . '/'. $desde . '/'. $hasta .'/' . $offset);
+            redirect($this->folder.$this->clase.'ver/'.$id . '/'. $desde . '/'. $hasta .'/'.$tipo .'/' . $offset);
     	}
 
         $data['datos'] = $this->v->get_by_id($id)->row();
