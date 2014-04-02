@@ -97,6 +97,44 @@ class Venta extends CI_Model{
         return $this->db->get($this->tbl.' v', $limit, $offset);
     }
     
+    function get_contado_by_fecha( $desde, $hasta, $tipo = NULL, $filtro = NULL, $limit = NULL, $offset = 0){
+        $this->db->select('v.*, c.*, u.nombre AS usuario, ca.nombre AS caja, CONCAT(e.nombre, " ", e.apellido) AS empleado', FALSE);
+        $this->db->join('Cliente c','v.id_cliente = c.id_cliente');
+        $this->db->join('Usuario u', 'v.id_usuario = u.id_usuario');
+        $this->db->join('Empleado e','v.id_empleado = e.id_empleado');
+        $this->db->join('Caja ca', 'v.id_caja = ca.id_caja');
+        $this->db->where('v.fecha BETWEEN "'.$desde.'" AND "'.$hasta.'"');
+        $this->db->where('v.tipo', 'contado');
+        if(!empty($tipo) && $tipo == 'usuario')
+            $this->db->like('u.nombre', $filtro);
+        if(!empty($tipo) && $tipo == 'cliente')
+            $this->db->like('c.nombre', $filtro);
+        if(!empty($tipo) && $tipo == 'caja')
+            $this->db->like('ca.nombre', $filtro);
+        $this->db->group_by('v.id_venta');
+        $this->db->order_by('v.cancelada desc, v.id_venta');
+        return $this->db->get($this->tbl.' v', $limit, $offset);
+    }
+    
+    function get_credito_by_fecha( $desde, $hasta, $tipo = NULL, $filtro = NULL, $limit = NULL, $offset = 0){
+        $this->db->select('v.*, c.*, u.nombre AS usuario, ca.nombre AS caja, CONCAT(e.nombre, " ", e.apellido) AS empleado', FALSE);
+        $this->db->join('Cliente c','v.id_cliente = c.id_cliente');
+        $this->db->join('Usuario u', 'v.id_usuario = u.id_usuario');
+        $this->db->join('Empleado e','v.id_empleado = e.id_empleado');
+        $this->db->join('Caja ca', 'v.id_caja = ca.id_caja');
+        $this->db->where('v.fecha BETWEEN "'.$desde.'" AND "'.$hasta.'"');
+        $this->db->where('v.tipo', 'credito');
+        if(!empty($tipo) && $tipo == 'usuario')
+            $this->db->like('u.nombre', $filtro);
+        if(!empty($tipo) && $tipo == 'cliente')
+            $this->db->like('c.nombre', $filtro);
+        if(!empty($tipo) && $tipo == 'caja')
+            $this->db->like('ca.nombre', $filtro);
+        $this->db->group_by('v.id_venta');
+        $this->db->order_by('v.cancelada desc, v.id_venta');
+        return $this->db->get($this->tbl.' v', $limit, $offset);
+    }
+    
     /**
     * ***********************************************************************
     * Obtener recibo por id
