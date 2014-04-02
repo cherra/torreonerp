@@ -57,7 +57,21 @@
     </style>
 </head>
 <body>
-
+<div id="loadingModal" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+               <h4 class="text-center">Cargando...</h4>
+           </div>
+           <div class="modal-body">
+               <p class="text-center"><img src="<?php echo asset_url(); ?>img/loading.gif" id="loading-indicator"/></p>
+           </div>
+<!--           <div class="modal-footer">
+               <p class="text-center">Generando vista</p>
+           </div>-->
+        </div>
+    </div>
+</div>
 <!-- menu-top ---------------------------------------------------------------- -->
 <nav class="navbar navbar-default navbar-fixed-top navbar-inverse" role="navigation">
     <div class="container">
@@ -186,7 +200,9 @@
             </div>
     </div>
 </div>
-    
+
+</div>
+
 <script>
     $(document).ready(function(){
         $('form').validate({
