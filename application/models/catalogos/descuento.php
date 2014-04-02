@@ -74,10 +74,7 @@ class Descuento extends CI_Model {
     function get_by_cliente($id, $limit = NULL, $offset = 0, $filtro = NULL) {
         $this->db->join('Articulo a','tc.id_articulo = a.id_articulo');
         if(!empty($filtro)){
-            $filtro = explode(' ', $filtro);
-            foreach($filtro as $f){
-                $this->db->or_like('a.nombre',$f);
-            }
+            $this->db->like('a.nombre',$filtro);
         }
         $this->db->where('tc.id_cliente', $id);
         $this->db->order_by('a.nombre');
