@@ -16,9 +16,9 @@ class Seguridad extends CI_Controller{
     }
     
     public function permisos_lista( $offset = '0' ){
-        
+       
         $this->load->model('permiso','p');
-        
+       
         // Filtro de busqueda (se almacenan en la sesión a través de un hook)
         $filtro = $this->session->userdata('filtro');
         if($filtro)
