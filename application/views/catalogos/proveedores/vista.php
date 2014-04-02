@@ -105,10 +105,4 @@
             <p class="form-control-static"><?php echo (isset($datos->dias_credito) ? $datos->dias_credito : ''); ?></p>
         </div>
     </div>
-    <div class="form-group">
-        <label class="col-sm-2" for="cuenta_contable">Cuenta contable</label>
-        <div class="col-sm-8 col-md-6 col-lg-4">
-            <p class="form-control-static"><?php echo (isset($datos->cuenta_contable) ? $datos->cuenta_contable : ''); ?></p>
-        </div>
-    </div>
 <?php echo form_close(); ?>

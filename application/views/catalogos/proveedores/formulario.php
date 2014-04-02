@@ -113,12 +113,6 @@
             <input type="text" name="dias_credito" class="form-control" value="<?php echo (isset($datos->dias_credito) ? $datos->dias_credito : ''); ?>" placeholder="Días de crédito">
         </div>
     </div>
-    <div class="form-group">
-        <label class="col-sm-2" for="cuenta_contable">Cuenta contable</label>
-        <div class="col-sm-8 col-md-6 col-lg-4">
-            <input type="text" name="cuenta_contable" class="form-control" value="<?php echo (isset($datos->cuenta_contable) ? $datos->cuenta_contable : ''); ?>" placeholder="Cuenta contable">
-        </div>
-    </div>
 <?php echo form_close(); ?>
 
 <script type="text/javascript">
