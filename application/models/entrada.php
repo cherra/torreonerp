@@ -27,7 +27,7 @@ class Entrada extends CI_Model {
         $this->db->select('e.*, p.*, u.nombre AS usuario', FALSE);
         $this->db->join('Proveedor p','e.id_proveedor = p.id_proveedor');
         $this->db->join('Usuario u', 'e.id_usuario = u.id_usuario');
-        $this->db->where('e.fecha BETWEEN "'.$desde.'" AND "'.$hasta.'"');
+        $this->db->where('e.fecha BETWEEN "'.$desde.'" AND "'.$hasta.' 23:59:59"');
         if(!empty($filtro)){
             $like = '(p.nombre LIKE "%'.$filtro.'%" 
                 OR p.nombre_comercial LIKE "%'.$filtro.'%"
@@ -66,7 +66,7 @@ class Entrada extends CI_Model {
         $this->db->select('e.*, p.*, u.nombre AS usuario', FALSE);
         $this->db->join('Proveedor p','e.id_proveedor = p.id_proveedor');
         $this->db->join('Usuario u', 'e.id_usuario = u.id_usuario');
-        $this->db->where('e.fecha BETWEEN "'.$desde.'" AND "'.$hasta.'"');
+        $this->db->where('e.fecha BETWEEN "'.$desde.'" AND "'.$hasta.' 23:59:59"');
         if(!empty($filtro)){
             $like = '(p.nombre LIKE "%'.$filtro.'%" 
                 OR p.nombre_comercial LIKE "%'.$filtro.'%"
