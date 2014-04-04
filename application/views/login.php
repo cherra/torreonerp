@@ -41,6 +41,7 @@
               <select name="basededatos" class="form-control required">
                 <option value="">Sucursal...</option>
                 <option value="Torreon">Matriz</option>
+                <option value="Ley">Ley</option>
                 <option value="TorreonSucursal">Mercado</option>
                 <option value="Mayoreo">Mayoreo</option>
                 <option value="Taqueria">Taquería</option>
