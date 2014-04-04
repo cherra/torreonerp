@@ -19,7 +19,7 @@
             <div class="col-sm-8">
                 <select name="tipo" id="tipo" class="form-control required">
                     <option value="cliente" <?php if(isset($tipo) && $tipo == 'cliente') echo "selected"; ?>>Cliente</option>
-                    <option value="usuario" <?php if(isset($tipo) && $tipo == 'usuario') echo "selected"; ?>>Usuario</option>
+                    <option value="usuario" <?php if(isset($tipo) && $tipo == 'usuario') echo "selected"; ?>>Cajero</option>
                     <option value="caja" <?php if(isset($tipo) && $tipo == 'caja') echo "selected"; ?>>Caja</option>
                 </select>
             </div>
