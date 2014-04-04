@@ -47,7 +47,7 @@ class Ventas extends CI_Controller {
         $config['base_url'] = site_url($this->folder.$this->clase.'lista/'.$desde.'/'.$hasta.'/'.$tipo);
         $config['total_rows'] = $this->v->count_by_fecha($desde, $hasta, $tipo, $filtro);
         $config['per_page'] = $page_limit;
-        $config['uri_segment'] = 6;
+        $config['uri_segment'] = 7;
         $this->pagination->initialize($config);
         $data['pagination'] = $this->pagination->create_links();
 
