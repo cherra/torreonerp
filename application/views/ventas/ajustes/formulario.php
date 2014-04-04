@@ -66,6 +66,11 @@
         </div>
     </div>
 <?php echo form_close(); ?>
+<div class="row">
+    <div class="col-sm-12">
+        <?php echo $table; ?>
+    </div>
+</div>
 
 <script type="text/javascript">
     

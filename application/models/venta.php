@@ -150,6 +150,13 @@ class Venta extends CI_Model{
         return $this->db->get($this->tbl, 1);
     }
     
+    function get_articulos( $id = NULL ){
+        $this->db->join('Articulo a','va.id_articulo = a.id_articulo');
+        $this->db->where('va.id_venta',$id);
+        $this->db->order_by('va.id_venta_articulo');
+        return $this->db->get('Venta_Articulo va');
+    }
+    
     function get_acumulado_articulo( $id, $fecha = NULL, $hora = NULL){
         $this->db->select('SUM(va.cantidad) AS cantidad', FALSE);
         $this->db->join('Venta_Articulo va', 'v.id_venta = va.id_venta');

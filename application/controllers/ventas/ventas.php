@@ -97,6 +97,24 @@ class Ventas extends CI_Controller {
         
     	$data['action'] = $this->folder.$this->clase.'editar/' . $id . '/'. $desde . '/'. $hasta.'/'.$tipo. '/' . $offset;
 
+        $datos = $this->v->get_articulos($venta->row()->id_venta)->result();
+        // generar tabla
+        $this->load->library('table');
+        $this->table->set_empty('&nbsp;');
+        $tmpl = array ( 'table_open' => '<table class="' . $this->config->item('tabla_css') . '" >' );
+        $this->table->set_template($tmpl);
+        $this->table->set_heading('Código', 'Artículo', 'Cantidad', 'Precio', 'Importe');
+        foreach ($datos as $d) {
+            $this->table->add_row(
+                    $d->codigo,
+                    $d->nombre,
+                    array('data' => number_format($d->cantidad,2), 'class' => 'text-right'),
+                    array('data' => number_format($d->precio,2), 'class' => 'text-right'),
+                    array('data' => number_format($d->monto,2), 'class' => 'text-right')
+            );
+        }
+        $data['table'] = $this->table->generate();
+        
     	$data['datos'] = $venta->row();
         $data['cliente'] = $this->c->get_by_id($data['datos']->id_cliente)->row();
         $data['usuario'] = $this->u->get_by_id($data['datos']->id_usuario)->row();
@@ -122,7 +140,25 @@ class Ventas extends CI_Controller {
     	
     	$data['mensaje'] = '';
     	$data['action'] = $this->folder.$this->clase.'editar/' . $id . '/'. $desde . '/'. $hasta.'/'.$tipo. '/' . $offset;
-    	 
+    	
+        $datos = $this->v->get_articulos($venta->row()->id_venta)->result();
+        // generar tabla
+        $this->load->library('table');
+        $this->table->set_empty('&nbsp;');
+        $tmpl = array ( 'table_open' => '<table class="' . $this->config->item('tabla_css') . '" >' );
+        $this->table->set_template($tmpl);
+        $this->table->set_heading('Código', 'Artículo', 'Cantidad', 'Precio', 'Importe');
+        foreach ($datos as $d) {
+            $this->table->add_row(
+                    $d->codigo,
+                    $d->nombre,
+                    array('data' => number_format($d->cantidad,2), 'class' => 'text-right'),
+                    array('data' => number_format($d->precio,2), 'class' => 'text-right'),
+                    array('data' => number_format($d->monto,2), 'class' => 'text-right')
+            );
+        }
+        $data['table'] = $this->table->generate();
+        
     	if ( ($datos = $this->input->post()) ) {
             $this->v->update($id, $datos);
             $this->session->set_flashdata('mensaje',$this->config->item('update_success'));
